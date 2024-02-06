@@ -1,4 +1,8 @@
 # Analytics Engineering Framework - Data Orchestration
+[Analytics engineers](https://www.getdbt.com/what-is-analytics-engineering) transform, test, deploy, and document data using software engineering principles, providing clean datasets that empower end users to independently answer their own questions.
+
+Data orchestration plays a vital role in enabling efficient data access and analysis, making it critical for data lakes and data warehouses.
+
 
 This repository automates the creation of [Google Cloud Workflows Definition](https://cloud.google.com/workflows/docs/reference/syntax) files from data pipeline configuration files. 
 It's designed for seamless integration into your CI/CD pipeline, using ***LEVEL***, ***THREAD***, and ***STEP*** abstractions to define your batch data pipeline. 
