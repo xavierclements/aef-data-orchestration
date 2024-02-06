@@ -1,0 +1,24 @@
+
+                {
+                   "Level_{LEVEL_ID}_Thread_{THREAD_ID}" : {
+                        "steps": [
+                                  <<THREAD_STEPS>>
+
+                                  ,
+                                  {
+                                    "SuccessBranch_{LEVEL_ID}_{THREAD_ID}": {
+                                          "next": "end"
+                                    }
+                                  }
+                                  ,
+                                  {
+                                    "FailBranch_{LEVEL_ID}_{THREAD_ID}": {
+                                      "raise": {
+                                          "code": 55,
+                                          "message": "Level Error"
+                                        }
+                                    }
+                              }
+                        ]
+                      }
+                }

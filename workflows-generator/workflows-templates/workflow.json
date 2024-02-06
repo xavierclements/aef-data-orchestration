@@ -1,0 +1,14 @@
+{
+  "main": {
+    "steps": [
+        <<LEVELS>>
+        ,
+        {
+          "WorkflowEnd": {
+            "next": "end"
+          }
+        }
+        <<WORKFLOW_FAIL>>
+    ]
+  }
+}

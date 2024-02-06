@@ -1,0 +1,17 @@
+
+                          "{JOB_ID}": {
+                              "Type": "Choice",
+                              "Choices": [
+                                {
+                                  "Variable": "$.{RESULT_VARIABLE_NAME}",
+                                  "StringEquals": "True",
+                                  "Next": "{NEXT_JOB_ID_TRUE}"
+                                },
+                                {
+                                  "Variable": "$.{RESULT_VARIABLE_NAME}",
+                                  "StringEquals": "False",
+                                  "Next": "{NEXT_JOB_ID_FALSE}"
+                                }
+                              ],
+                              "Default": "FailBranch_{LEVEL_ID}_{THREAD_ID}"
+                          }

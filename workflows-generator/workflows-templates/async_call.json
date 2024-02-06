@@ -1,0 +1,33 @@
+                        {
+                          "{JOB_ID}": {
+                              "next": "{JOB_ID}_Wait"
+                          }
+                        },
+                        {
+                         "{JOB_ID}_Wait": {
+                                   "call": "sys.sleep",
+                                   "args": {
+                                     "seconds": {WAIT_TIME_SECONDS}
+                                   },
+                                   "next": "{JOB_ID}_Status"
+                          }
+                        },
+                        {
+                         "{JOB_ID}_Status": {
+                                    "next": "{JOB_ID}_EvaluateStatus"
+                          }
+                        },
+                        {
+                          "{JOB_ID}_EvaluateStatus": {
+                                    "switch": [
+                                      {
+                                        "condition": "$.{ASYNC_JOB_STATUS_VARIABLE_NAME} == 'FINISHED' ",
+                                        "next": "{NEXT_JOB_ID}"
+                                      },
+                                      {
+                                        "condition": true,
+                                        "next": "{JOB_ID}_Wait"
+                                      }
+                                    ]
+                          }
+                        }

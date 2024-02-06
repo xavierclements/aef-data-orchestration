@@ -1,0 +1,22 @@
+
+                          "{JOB_ID}": {
+
+                                 "Type":"Task",
+                                 "Resource":"",
+                                 "Parameters":{
+                                    "Input.$":"$",
+                                    "StateMachineId":"{CLOUD_FUNCTION_ID}",
+                                    "Name.$":"States.Format('{JOB_ID}_exec_{}', States.UUID())"
+                                 },
+                                   "Catch": [
+                                              {
+                                                "ErrorEquals": ["CustomError"],
+                                                "Next": "FailBranch_{LEVEL_ID}_{THREAD_ID}"
+                                              },
+                                              {
+                                                 "ErrorEquals": ["States.ALL"],
+                                                 "Next": "FailBranch_{LEVEL_ID}_{THREAD_ID}"
+                                              }
+                                          ],
+                                  "Next": "{NEXT_JOB_ID}"
+                          }

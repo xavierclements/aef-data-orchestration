@@ -1,0 +1,26 @@
+[
+    {
+        "ParameterKey": "pEnvironment",
+        "ParameterValue": "dev"
+    },
+    {
+        "ParameterKey": "pRegion",
+        "ParameterValue": "us-east1"
+    },
+    {
+        "ParameterKey": "pProjectID",
+        "ParameterValue": "us-east1"
+    },
+    {
+        "ParameterKey": "pApplicationPrefix",
+        "ParameterValue": "app1-etl1"
+    },
+	{
+        "ParameterKey": "pFunctionStepAsynchronousName",
+        "ParameterValue": "StepAsynchronousCloudFunction"
+    },
+	{
+        "ParameterKey": "pFunctionStepSynchronousName",
+        "ParameterValue": "StepSynchronousCloudFunction"
+    }
+]
