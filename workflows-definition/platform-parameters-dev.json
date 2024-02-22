@@ -5,11 +5,11 @@
     },
     {
         "ParameterKey": "pRegion",
-        "ParameterValue": "us-east1"
+        "ParameterValue": "us-central1"
     },
     {
         "ParameterKey": "pProjectID",
-        "ParameterValue": "us-east1"
+        "ParameterValue": "p1"
     },
     {
         "ParameterKey": "pApplicationPrefix",

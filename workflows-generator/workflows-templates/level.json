@@ -1,11 +1,5 @@
-       {
-          "Level_{LEVEL_ID}": {
-            "parallel": {
-               "branches": [
-                    <<THREADS>>
-               ]
-               ,
-               "next": "{NEXT_LEVEL}"
-            }
-          }
-        }
+
+               - Level_{LEVEL_ID}:
+                   parallel:
+                       branches:
+                           <<THREADS>>

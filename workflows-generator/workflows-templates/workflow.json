@@ -1,14 +1,13 @@
-{
-  "main": {
-    "steps": [
-        <<LEVELS>>
-        ,
-        {
-          "WorkflowEnd": {
-            "next": "end"
-          }
-        }
-        <<WORKFLOW_FAIL>>
-    ]
-  }
-}
+- main:
+     try:
+         steps:
+             <<LEVELS>>
+     except:
+         as: e
+         steps:
+             - log:
+                 call: sys.log
+                 args:
+                     data: ${e}
+             - unhandled_exception:
+                 raise: ${e}

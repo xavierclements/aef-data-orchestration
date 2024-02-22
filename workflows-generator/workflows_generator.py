@@ -71,15 +71,14 @@ def load_templates():
     """method for loading templates"""
     global workflow_template, level_template, thread_template, \
         cloud_function_sync_template, boolean_choice_template, cloud_function_async_template, \
-        workflow_fail_default_template, workflows_sync_template
+        workflows_sync_template
     workflow_template = read_template("workflow")
     level_template = read_template("level")
     thread_template = read_template("thread")
-    cloud_function_sync_template = read_template("sync_call")
+    cloud_function_sync_template = ""
     cloud_function_async_template = read_template("async_call")
-    boolean_choice_template = read_template("boolean_choice")
-    workflow_fail_default_template = read_template("fail_default")
-    workflows_sync_template = read_template("workflow_sync")
+    boolean_choice_template = ""
+    workflows_sync_template = ""
 
 
 def read_template(template):
@@ -104,8 +103,7 @@ def read_template(template):
 def generate_workflows_body(config):
     """method to generate cloud workflows body"""
     levels = process_levels(config)
-    workflow_body = workflow_template.replace("<<LEVELS>>", ",".join(levels))
-    workflow_body = workflow_body.replace("<<WORKFLOW_FAIL>>", workflow_fail_default_template)
+    workflow_body = workflow_template.replace("<<LEVELS>>", "".join(levels))
     return workflow_body
 
 
@@ -114,14 +112,14 @@ def process_levels(config):
     levels = []
     for index, level in enumerate(config):
         level_body = level_template.replace("{LEVEL_ID}", level.get("LEVEL_ID"))
-        try:
-            next_level = config[index + 1]
-            level_body = level_body.replace("{NEXT_LEVEL}",
-                                            "Parallel Task_" + next_level.get("LEVEL_ID"))
-        except (KeyError, IndexError):
-            level_body = level_body.replace("{NEXT_LEVEL}", "WorkflowEnd")
+        #try:
+            #next_level = config[index + 1]
+            #level_body = level_body.replace("{NEXT_LEVEL}",
+             #                               "Parallel Task_" + next_level.get("LEVEL_ID"))
+        #except (KeyError, IndexError):
+            #level_body = level_body.replace("{NEXT_LEVEL}", "WorkflowEnd")
         threads = process_threads(level.get("THREADS"), level.get("LEVEL_ID"))
-        level_body = level_body.replace("<<THREADS>>", ",".join(threads))
+        level_body = level_body.replace("<<THREADS>>", "".join(threads))
         levels.append(level_body)
 
     return levels
@@ -137,7 +135,7 @@ def process_threads(threads, level_id):
             0].get("JOB_NAME")
         thread_body = thread_body.replace("{STARTING_JOB_ID}", first_step_in_thread)
         steps = process_steps(thread.get("STEPS"), level_id, thread.get("THREAD_ID"))
-        thread_body = thread_body.replace("<<THREAD_STEPS>>", ",".join(steps))
+        thread_body = thread_body.replace("<<THREAD_STEPS>>", "".join(steps))
         thread_bodies.append(thread_body)
     return thread_bodies
 
@@ -303,8 +301,9 @@ def process_next_step(steps, step, index, level_id, thread_id, step_body):
                 next_step_name = next_step.get("JOB_ID") + "_" + next_step.get("JOB_NAME")
                 step_body = step_body.replace("{NEXT_JOB_ID}", next_step_name)
             except (KeyError, IndexError):
-                step_body = step_body.replace("{NEXT_JOB_ID}",
-                                              "SuccessBranch_" + level_id + "_" + thread_id)
+                #step_body = step_body.replace("{NEXT_JOB_ID}",
+                 #                             "SuccessBranch_" + level_id + "_" + thread_id)
+                step_body = step_body.replace("{NEXT_JOB_ID}","continue")
         else:
             next_step = find_step_by_id(step.get("NEXT"))
             next_step_name = next_step.get("JOB_ID") + "_" + next_step.get("JOB_NAME")
