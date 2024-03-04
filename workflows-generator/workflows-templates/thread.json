@@ -2,4 +2,3 @@
                            - Level_{LEVEL_ID}_Thread_{THREAD_ID}:
                                steps:
                                    <<THREAD_STEPS>>
-

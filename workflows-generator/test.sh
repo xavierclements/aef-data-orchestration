@@ -1,4 +1,4 @@
-WORKFLOW=etl_example_1
+WORKFLOW=workflow1
 
 python3 workflows_generator.py \
 ../workflows-definition/$WORKFLOW.json \

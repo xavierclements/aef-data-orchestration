@@ -1,13 +1,16 @@
-- main:
-     try:
-         steps:
-             <<LEVELS>>
-     except:
-         as: e
-         steps:
-             - log:
-                 call: sys.log
-                 args:
-                     data: ${e}
-             - unhandled_exception:
-                 raise: ${e}
+main:
+  params: [args]
+  steps:
+   - workflow:
+         try:
+             steps:
+                 <<LEVELS>>
+         except:
+             as: e
+             steps:
+                 - log:
+                     call: sys.log
+                     args:
+                         data: ${e}
+                 - unhandled_exception:
+                     raise: ${e}

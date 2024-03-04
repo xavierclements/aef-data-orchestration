@@ -1,16 +1,45 @@
 
-                                - {JOB_ID}:
-                                    next: "{JOB_ID}_Wait"
-                                - {JOB_ID}_Wait:
-                                    call: "sys.sleep"
-                                    args:
-                                        seconds: {WAIT_TIME_SECONDS}
-                                    next: "{JOB_ID}_Status"
-                                - {JOB_ID}_Status:
-                                    next: "{JOB_ID}_EvaluateStatus"
-                                - {JOB_ID}_EvaluateStatus:
-                                    switch:
-                                      - condition: true
-                                        next: "{NEXT_JOB_ID}"
-                                      - condition: true
-                                        next: "{JOB_ID}_Wait"
+                                    - {JOB_ID}_Group:
+                                       steps:
+                                          - {JOB_ID}:
+                                              call: http.post
+                                              args:
+                                                  url: "https://us-central1-dp-111-orc.cloudfunctions.net/async-function"
+                                                  auth:
+                                                      type: OIDC
+                                                  headers:
+                                                      Content-Type: "application/json"
+                                                  body:
+                                                      call_type: "get_id"
+                                                      workflow_name: "${args.workflow_name}"
+                                                      execution_id: "${args.execution_id}"
+                                                      job_name: "{JOB_ID}"
+                                              result: async_job_id
+                                              next: "{JOB_ID}_Wait"
+                                          - {JOB_ID}_Wait:
+                                              call: "sys.sleep"
+                                              args:
+                                                  seconds: {WAIT_TIME_SECONDS}
+                                              next: "{JOB_ID}_Status"
+                                          - {JOB_ID}_Status:
+                                              call: http.post
+                                              args:
+                                                  url: "https://us-central1-dp-111-orc.cloudfunctions.net/async-function"
+                                                  auth:
+                                                      type: OIDC
+                                                  headers:
+                                                      Content-Type: "application/json"
+                                                  body:
+                                                      call_type: "get_status"
+                                                      async_job_id: ${async_job_id.body}
+                                                      workflow_name: "${args.workflow_name}"
+                                                      execution_id: "${args.execution_id}"
+                                                      job_name: "{JOB_ID}"
+                                              result: job_status
+                                              next: "{JOB_ID}_EvaluateStatus"
+                                          - {JOB_ID}_EvaluateStatus:
+                                              switch:
+                                                - condition: ${job_status.body == "success"}
+                                                  next: "{NEXT_JOB_ID}"
+                                                - condition: false
+                                                  next: "{JOB_ID}_Wait"
