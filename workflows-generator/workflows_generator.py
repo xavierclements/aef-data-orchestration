@@ -71,7 +71,7 @@ def load_templates():
     """method for loading templates"""
     global workflow_template, level_template, thread_template, \
         cloud_function_sync_template, boolean_choice_template, cloud_function_async_template, \
-        workflows_sync_template
+        workflows_sync_template, cloud_function_async_template_unidented
     workflow_template = read_template("workflow")
     level_template = read_template("level")
     thread_template = read_template("thread")
@@ -100,11 +100,22 @@ def read_template(template):
         raise err
 
 
+def get_unidented_template(template):
+    new_template_lines = []
+    lines = template.splitlines()
+    for line in lines:
+        line = line[12:]
+        new_template_lines.append(line)
+    return '\n'.join(new_template_lines)
+
+
+
 def generate_workflows_body(config):
     """method to generate cloud workflows body"""
     levels = process_levels(config)
     workflow_body = workflow_template.replace("<<LEVELS>>", "".join(levels))
     return workflow_body
+
 
 
 def process_levels(config):
@@ -117,6 +128,8 @@ def process_levels(config):
         else:
             level_body = level_template.replace("{LEVEL_ID}", level.get("LEVEL_ID"))
         level_body = level_body.replace("<<THREADS>>", "".join(threads))
+        if len(level.get("THREADS")) == 1:
+            level_body = get_unidented_template(level_body)
         levels.append(level_body)
 
     return levels
@@ -157,7 +170,7 @@ def process_steps(steps, level_id, thread_id, single_thread):
                 assemble_cloud_function_id(cloud_function_sync_name), step,
                 format_constant.format(cloud_function_prefix, step.get("FUNCTION_NAME")))
         elif step.get("TYPE") == 'async':
-            step_body = process_step_async(
+            step_body = process_step_async(level_id,
                 assemble_cloud_function_id(cloud_function_async_name), step,
                 format_constant.format(
                     cloud_function_prefix, step.get("FUNCTION_ID_NAME")),
@@ -220,10 +233,11 @@ def process_step_sync(cloud_function_level_1_id, step, cloud_function_name):
     return step_body
 
 
-def process_step_async(cloud_funciton_level_1_id, step, FUNCTION_ID_NAME, FUNCTION_STATUS_NAME):
+def process_step_async(level_id, cloud_funciton_level_1_id, step, FUNCTION_ID_NAME, FUNCTION_STATUS_NAME):
     """method to process async step"""
     step_name = step.get("JOB_ID") + "_" + step.get("JOB_NAME")
     step_body = cloud_function_async_template.replace("{JOB_ID}", step_name)
+    step_body = step_body.replace("{LEVEL_ID}", level_id)
     step_body = step_body.replace("{CLOUD_FUNCTION_ID}", cloud_funciton_level_1_id)
     step_body = step_body.replace("{CLOUD_FUNCTION_ID_TO_INVOKE}", FUNCTION_ID_NAME)
     step_body = step_body.replace("{CLOUD_FUNCTION_STATUS_TO_INVOKE}", FUNCTION_STATUS_NAME)
@@ -299,12 +313,18 @@ def process_next_step(steps, step, index, level_id, thread_id, step_body, single
                 next_step_name = next_step.get("JOB_ID") + "_" + next_step.get("JOB_NAME")
                 step_body = step_body.replace("{NEXT_JOB_ID}", next_step_name)
             except (KeyError, IndexError):
-                #step_body = step_body.replace("{NEXT_JOB_ID}",
-                 #                             "SuccessBranch_" + level_id + "_" + thread_id)
-                if single_thread:
-                    step_body = step_body.replace("{NEXT_JOB_ID}","end")
+                if level_exists(int(level_id) + 1) and single_thread:
+                    if level_exists_and_is_parallel(int(level_id) + 1):
+                        step_body = step_body.replace("{NEXT_JOB_ID}",
+                                                 "Level_" + str(int(level_id) + 1))
+                    else:
+                        step_body = step_body.replace("{NEXT_JOB_ID}",
+                                                      "Level_" + str(int(level_id) + 1) + "_Thread_" + thread_id)
                 else:
-                    step_body = step_body.replace("{NEXT_JOB_ID}","continue")
+                    if single_thread:
+                        step_body = step_body.replace("{NEXT_JOB_ID}","end")
+                    else:
+                        step_body = step_body.replace("{NEXT_JOB_ID}","continue")
         else:
             next_step = find_step_by_id(step.get("NEXT"))
             next_step_name = next_step.get("JOB_ID") + "_" + next_step.get("JOB_NAME")
@@ -318,6 +338,19 @@ def process_next_step(steps, step, index, level_id, thread_id, step_body, single
         step_body = step_body.replace("{NEXT_JOB_ID_FALSE}", false_next_step_name)
     return step_body
 
+
+def level_exists(level_number):
+    for level in workflow_config:
+        if int(level.get("LEVEL_ID")) == level_number:
+            return True
+    return False
+
+def level_exists_and_is_parallel(level_number):
+    for level in workflow_config:
+        if int(level.get("LEVEL_ID")) == level_number:
+            if len(level.get("THREADS")) > 1:
+                return True
+    return False
 
 def write_result(output_file, content):
     """
