@@ -33,20 +33,6 @@
             "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12"
           }
         ]
-      },
-      {
-        "THREAD_ID": "2",
-        "STEPS": [
-          {
-            "JOB_ID": "J04",
-            "JOB_NAME": "etl_step_1_1",
-            "TYPE": "async",
-            "FUNCTION_ID_NAME": "BigqueryAsyncExecutor",
-            "FUNCTION_STATUS_NAME": "BigqueryAsyncExecutor",
-            "WAIT_TIME_SECONDS": "10",
-            "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12"
-          }
-        ]
       }
     ]
   }

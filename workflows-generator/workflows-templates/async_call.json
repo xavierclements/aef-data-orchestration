@@ -14,6 +14,8 @@
                                                       workflow_name: "${args.workflow_name}"
                                                       execution_id: "${args.execution_id}"
                                                       job_name: "{JOB_ID}"
+                                                      start_date: "${args.start_date}"
+                                                      end_date: "${args.end_date}"
                                               result: async_job_id
                                               next: "{JOB_ID}_Wait"
                                           - {JOB_ID}_Wait:
@@ -35,6 +37,8 @@
                                                       workflow_name: "${args.workflow_name}"
                                                       execution_id: "${args.execution_id}"
                                                       job_name: "{JOB_ID}"
+                                                      start_date: "${args.start_date}"
+                                                      end_date: "${args.end_date}"
                                               result: job_status
                                               next: "{JOB_ID}_EvaluateStatus"
                                           - {JOB_ID}_EvaluateStatus:

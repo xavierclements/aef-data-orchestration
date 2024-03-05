@@ -111,14 +111,11 @@ def process_levels(config):
     """method to process levels"""
     levels = []
     for index, level in enumerate(config):
-        level_body = level_template.replace("{LEVEL_ID}", level.get("LEVEL_ID"))
-        #try:
-            #next_level = config[index + 1]
-            #level_body = level_body.replace("{NEXT_LEVEL}",
-             #                               "Parallel Task_" + next_level.get("LEVEL_ID"))
-        #except (KeyError, IndexError):
-            #level_body = level_body.replace("{NEXT_LEVEL}", "WorkflowEnd")
         threads = process_threads(level.get("THREADS"), level.get("LEVEL_ID"))
+        if len(threads) == 1:
+            level_body = "               <<THREADS>>"
+        else:
+            level_body = level_template.replace("{LEVEL_ID}", level.get("LEVEL_ID"))
         level_body = level_body.replace("<<THREADS>>", "".join(threads))
         levels.append(level_body)
 
@@ -128,19 +125,20 @@ def process_levels(config):
 def process_threads(threads, level_id):
     """method to process threads"""
     thread_bodies = []
+    single_thread = len(threads) == 1
     for index, thread in enumerate(threads):
         thread_body = thread_template.replace("{LEVEL_ID}", level_id)
         thread_body = thread_body.replace("{THREAD_ID}", thread.get("THREAD_ID"))
         first_step_in_thread = thread.get("STEPS")[0].get("JOB_ID") + "_" + thread.get("STEPS")[
             0].get("JOB_NAME")
         thread_body = thread_body.replace("{STARTING_JOB_ID}", first_step_in_thread)
-        steps = process_steps(thread.get("STEPS"), level_id, thread.get("THREAD_ID"))
+        steps = process_steps(thread.get("STEPS"), level_id, thread.get("THREAD_ID"), single_thread)
         thread_body = thread_body.replace("<<THREAD_STEPS>>", "".join(steps))
         thread_bodies.append(thread_body)
     return thread_bodies
 
 
-def process_steps(steps, level_id, thread_id):
+def process_steps(steps, level_id, thread_id, single_thread):
     """method to process steps"""
     step_bodies = []
     format_constant = "{}-{}"
@@ -174,7 +172,7 @@ def process_steps(steps, level_id, thread_id):
 
         step_body = step_body.replace("{LEVEL_ID}", level_id)
         step_body = step_body.replace("{THREAD_ID}", thread_id)
-        step_body = process_next_step(steps, step, index, level_id, thread_id, step_body)
+        step_body = process_next_step(steps, step, index, level_id, thread_id, step_body,single_thread)
         step_bodies.append(step_body)
     return step_bodies
 
@@ -292,7 +290,7 @@ def find_step_by_id(step_id):
     return None
 
 
-def process_next_step(steps, step, index, level_id, thread_id, step_body):
+def process_next_step(steps, step, index, level_id, thread_id, step_body, single_thread):
     """method to process next step"""
     if step.get("TYPE") in ('sync', 'unload', 'async', 'write_results', 'workflows'):
         if "NEXT" not in step.keys():
@@ -303,7 +301,10 @@ def process_next_step(steps, step, index, level_id, thread_id, step_body):
             except (KeyError, IndexError):
                 #step_body = step_body.replace("{NEXT_JOB_ID}",
                  #                             "SuccessBranch_" + level_id + "_" + thread_id)
-                step_body = step_body.replace("{NEXT_JOB_ID}","continue")
+                if single_thread:
+                    step_body = step_body.replace("{NEXT_JOB_ID}","end")
+                else:
+                    step_body = step_body.replace("{NEXT_JOB_ID}","continue")
         else:
             next_step = find_step_by_id(step.get("NEXT"))
             next_step_name = next_step.get("JOB_ID") + "_" + next_step.get("JOB_NAME")
