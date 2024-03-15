@@ -9,8 +9,8 @@
             "JOB_ID": "J01",
             "JOB_NAME": "etl_1_load_step",
             "TYPE": "async",
-            "FUNCTION_ID_NAME": "DataflowExecutor",
-            "FUNCTION_STATUS_NAME": "DataflowExecutor",
+            "FUNCTION_ID_NAME": "dataflow-executor",
+            "FUNCTION_STATUS_NAME": "dataflow-executor",
             "WAIT_TIME_SECONDS": "20",
             "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12"
           },
@@ -18,8 +18,8 @@
             "JOB_ID": "J02",
             "JOB_NAME": "etl_2_trnf_step1",
             "TYPE": "async",
-            "FUNCTION_ID_NAME": "BigqueryAsyncExecutor",
-            "FUNCTION_STATUS_NAME": "BigqueryAsyncExecutor",
+            "FUNCTION_ID_NAME": "bigquery-executor",
+            "FUNCTION_STATUS_NAME": "bigquery-executor",
             "WAIT_TIME_SECONDS": "5",
             "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "10"
           }
@@ -32,8 +32,8 @@
             "JOB_ID": "J03",
             "JOB_NAME": "etl_2_trnf_step2",
             "TYPE": "async",
-            "FUNCTION_ID_NAME": "BigqueryAsyncExecutor",
-            "FUNCTION_STATUS_NAME": "BigqueryAsyncExecutor",
+            "FUNCTION_ID_NAME": "bigquery-executor",
+            "FUNCTION_STATUS_NAME": "bigquery-executor",
             "WAIT_TIME_SECONDS": "5",
             "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "10"
           }

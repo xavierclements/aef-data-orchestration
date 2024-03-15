@@ -4,7 +4,7 @@
                                           - {JOB_ID}:
                                               call: http.post
                                               args:
-                                                  url: "https://us-central1-dp-111-orc.cloudfunctions.net/async-function"
+                                                  url: "{CLOUD_FUNCTION_ID}"
                                                   auth:
                                                       type: OIDC
                                                   headers:
@@ -14,6 +14,7 @@
                                                       workflow_name: "${args.workflow_name}"
                                                       execution_id: "${args.execution_id}"
                                                       job_name: "{JOB_ID}"
+                                                      function_url_to_call: "{CLOUD_FUNCTION_ID_TO_INVOKE}"
                                                       start_date: "${args.start_date}"
                                                       end_date: "${args.end_date}"
                                               result: async_job_id_{LEVEL_ID}
@@ -26,7 +27,7 @@
                                           - {JOB_ID}_Status:
                                               call: http.post
                                               args:
-                                                  url: "https://us-central1-dp-111-orc.cloudfunctions.net/async-function"
+                                                  url: "{CLOUD_FUNCTION_ID}"
                                                   auth:
                                                       type: OIDC
                                                   headers:
@@ -37,6 +38,7 @@
                                                       workflow_name: "${args.workflow_name}"
                                                       execution_id: "${args.execution_id}"
                                                       job_name: "{JOB_ID}"
+                                                      function_url_to_call: "{CLOUD_FUNCTION_STATUS_TO_INVOKE}"
                                                       start_date: "${args.start_date}"
                                                       end_date: "${args.end_date}"
                                               result: job_status_{LEVEL_ID}

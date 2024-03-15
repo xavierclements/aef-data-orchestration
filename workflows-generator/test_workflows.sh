@@ -1,4 +1,4 @@
-WORKFLOW=workflow1
+WORKFLOW=1_workflow_single_thread_1_level
 
 python3 workflows_generator.py \
 ../workflows-definition/$WORKFLOW.json \

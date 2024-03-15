@@ -27,8 +27,8 @@
             "JOB_ID": "J03",
             "JOB_NAME": "etl_step_3",
             "TYPE": "async",
-            "FUNCTION_ID_NAME": "BigqueryAsyncExecutor",
-            "FUNCTION_STATUS_NAME": "BigqueryAsyncExecutor",
+            "FUNCTION_ID_NAME": "bigquery-executor",
+            "FUNCTION_STATUS_NAME": "bigquery-executor",
             "WAIT_TIME_SECONDS": "10",
             "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12"
           }
@@ -46,8 +46,8 @@
             "JOB_ID": "J05",
             "JOB_NAME": "etl_step_1",
             "TYPE": "async",
-            "FUNCTION_ID_NAME": "BigqueryAsyncExecutor",
-            "FUNCTION_STATUS_NAME": "BigqueryAsyncExecutor",
+            "FUNCTION_ID_NAME": "bigquery-executor",
+            "FUNCTION_STATUS_NAME": "bigquery-executor",
             "WAIT_TIME_SECONDS": "10",
             "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12"
           },
@@ -55,8 +55,8 @@
             "JOB_ID": "J06",
             "JOB_NAME": "etl_step_2",
             "TYPE": "async",
-            "FUNCTION_ID_NAME": "BigqueryAsyncExecutor",
-            "FUNCTION_STATUS_NAME": "BigqueryAsyncExecutor",
+            "FUNCTION_ID_NAME": "bigquery-executor",
+            "FUNCTION_STATUS_NAME": "bigquery-executor",
             "WAIT_TIME_SECONDS": "10",
             "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12"
           },
@@ -64,8 +64,8 @@
             "JOB_ID": "J07",
             "JOB_NAME": "etl_step_3",
             "TYPE": "async",
-            "FUNCTION_ID_NAME": "BigqueryAsyncExecutor",
-            "FUNCTION_STATUS_NAME": "BigqueryAsyncExecutor",
+            "FUNCTION_ID_NAME": "bigquery-executor",
+            "FUNCTION_STATUS_NAME": "bigquery-executor",
             "WAIT_TIME_SECONDS": "10",
             "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12"
           }

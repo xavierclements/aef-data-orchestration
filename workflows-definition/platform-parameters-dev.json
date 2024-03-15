@@ -1,26 +1,18 @@
 [
     {
-        "ParameterKey": "pEnvironment",
-        "ParameterValue": "dev"
-    },
-    {
         "ParameterKey": "pRegion",
         "ParameterValue": "us-central1"
     },
     {
         "ParameterKey": "pProjectID",
-        "ParameterValue": "p1"
-    },
-    {
-        "ParameterKey": "pApplicationPrefix",
-        "ParameterValue": "app1-etl1"
+        "ParameterValue": "dp-111-orc"
     },
 	{
         "ParameterKey": "pFunctionStepAsynchronousName",
-        "ParameterValue": "StepAsynchronousCloudFunction"
+        "ParameterValue": "async-function"
     },
 	{
         "ParameterKey": "pFunctionStepSynchronousName",
-        "ParameterValue": "StepSynchronousCloudFunction"
+        "ParameterValue": "sync-function"
     }
 ]

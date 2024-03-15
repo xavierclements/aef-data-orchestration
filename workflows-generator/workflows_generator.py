@@ -13,9 +13,9 @@
 # limitations under the License.
 
 import json
-import sys
-import os
+from commons import *
 
+WORKFLOWS_FOLDER = "workflows-templates"
 
 def main():
     """
@@ -28,7 +28,7 @@ def main():
     :return: NA
     """
     global workflow_config, exec_config, generate_for_pipeline, environment, config_file
-    usage(4)
+    usage(4,'json')
     workflow_file = sys.argv[1]
     config_file = sys.argv[2]
     output_file = sys.argv[3]
@@ -48,56 +48,20 @@ def main():
     write_result(output_file, workflow_body)
 
 
-def usage(args_expected):
-    """ method to explain usage"""
-    if len(sys.argv) < args_expected + 1:
-        print('!Error, number of arguments passed=' + str(len(sys.argv) - 1) + ' expected=' + str(
-            args_expected))
-        print('...Usage: ' + sys.argv[
-            0] + ' <workflow_file>.json <parameters-file>.json <result-file>.json '
-                 '<gcp-account-number> <deploy-for-pipeline(True|False)')
-        sys.exit(0)
-
-
-def process_config_key_values(config_array):
-    """method for config key values"""
-    result = {}
-    for pair in config_array:
-        result[pair.get("ParameterKey")] = pair.get("ParameterValue")
-    return result
-
 
 def load_templates():
     """method for loading templates"""
     global workflow_template, level_template, thread_template, \
         cloud_function_sync_template, boolean_choice_template, cloud_function_async_template, \
         workflows_sync_template, cloud_function_async_template_unidented
-    workflow_template = read_template("workflow")
-    level_template = read_template("level")
-    thread_template = read_template("thread")
+    workflow_template = read_template("workflow",generate_for_pipeline, WORKFLOWS_FOLDER, "json")
+    level_template = read_template("level",generate_for_pipeline, WORKFLOWS_FOLDER, "json")
+    thread_template = read_template("thread",generate_for_pipeline, WORKFLOWS_FOLDER, "json")
     cloud_function_sync_template = ""
-    cloud_function_async_template = read_template("async_call")
+    cloud_function_async_template = read_template("async_call",generate_for_pipeline, WORKFLOWS_FOLDER, "json")
     boolean_choice_template = ""
     workflows_sync_template = ""
 
-
-def read_template(template):
-    """method to read templates"""
-    try:
-        if generate_for_pipeline:
-            with open(os.path.dirname(__file__) + "/workflows-templates/" + template + '.json', 'r',
-                      encoding="utf-8") as file:
-                data = file.read()
-                return data
-        else:
-            with open(os.getcwd() + "/workflows-templates/" + template + '.json', 'r', encoding="utf-8") \
-                    as file:
-                data = file.read()
-                return data
-
-    except Exception as err:
-        print('Error reading template file: ' + str(type(err)))
-        raise err
 
 
 def get_unidented_template(template):
@@ -154,32 +118,25 @@ def process_threads(threads, level_id):
 def process_steps(steps, level_id, thread_id, single_thread):
     """method to process steps"""
     step_bodies = []
-    format_constant = "{}-{}"
-    cloud_function_prefix = format_constant.format(exec_config.get("pApplicationPrefix"),
-                                                   exec_config.get("pEnvironment"))
-    cloud_function_sync_name = format_constant.format(cloud_function_prefix, exec_config.get(
-        "pFunctionStepSynchronousName"))
-    cloud_function_async_name = format_constant.format(cloud_function_prefix, exec_config.get(
-        "pFunctionStepAsynchronousName"))
+    cloud_function_sync_name = exec_config.get("pFunctionStepSynchronousName")
+    cloud_function_async_name = exec_config.get("pFunctionStepAsynchronousName")
 
     for index, step in enumerate(steps):
         step_body = ''
-        format_constant = '{}-{}'
-        if step.get("TYPE") in ['sync', 'unload']:
+        if step.get("TYPE") == 'sync':
             step_body = process_step_sync(
-                assemble_cloud_function_id(cloud_function_sync_name), step,
-                format_constant.format(cloud_function_prefix, step.get("FUNCTION_NAME")))
+                assemble_cloud_function_id(cloud_function_sync_name, exec_config), step,
+                step.get("FUNCTION_NAME"))
         elif step.get("TYPE") == 'async':
             step_body = process_step_async(level_id,
-                assemble_cloud_function_id(cloud_function_async_name), step,
-                format_constant.format(
-                    cloud_function_prefix, step.get("FUNCTION_ID_NAME")),
-                format_constant.format(
-                    cloud_function_prefix, step.get("FUNCTION_STATUS_NAME")))
+                assemble_cloud_function_id(cloud_function_async_name, exec_config), step,
+                step.get("FUNCTION_ID_NAME"),
+                step.get("FUNCTION_STATUS_NAME"))
         elif step.get("TYPE") == 'boolean_choice':
             step_body = process_step_boolean_choice(step)
+        #TODO workflows functionality
         elif step.get("TYPE") == 'workflows':
-            workflows_name = step.get("workflows_NAME")
+            workflows_name = step.get("workflows_name")
             workflows_id = assemble_workflows_id(workflows_name)
             step_body = process_step_workflows(workflows_id, step)
 
@@ -199,32 +156,19 @@ def process_step_sync(cloud_function_level_1_id, step, cloud_function_name):
     step_body = step_body.replace("{ENVIRONMENT}", environment)
     step_body = step_body.replace("{JOB_IDENTIFIER}", step.get("JOB_ID"))
     step_body = step_body.replace("{JOB_NAME}", step.get("JOB_NAME"))
+    #TODO Read Input From Logic
     if "READ_INPUT_FROM" in step.keys():
         step_body = step_body.replace("{READ_INPUT_FROM}", step.get("READ_INPUT_FROM"))
     else:
         step_body = step_body.replace("{READ_INPUT_FROM}", "ENV")
-    if "LAST_STEP" in step.keys():
-        step_body = step_body.replace("{LAST_STEP}", step.get("LAST_STEP"))
-    else:
-        step_body = step_body.replace("{LAST_STEP}", "False")
-    if "RESULT_VARIABLE_NAME" in step.keys():
-        step_body = step_body.replace("{RESULT_VARIABLE_NAME}", step.get("RESULT_VARIABLE_NAME"))
-        step_body = step_body.replace("{RESULT_PATH_BLOCK}",
-                                      '"ResultPath": "$.' + step.get(
-                                          "RESULT_VARIABLE_NAME") + '",')
-    else:
-        step_body = step_body.replace("{RESULT_VARIABLE_NAME}", "None")
-        step_body = step_body.replace("{RESULT_PATH_BLOCK}", '"ResultPath": null ,')
 
     if "TIMEOUT_SECONDS" in step.keys():
         step_body = step_body.replace("{TIMEOUT_SECONDS_BLOCK}",
                                       '"TimeoutSeconds": ' + step.get("TIMEOUT_SECONDS") + ',')
     else:
         step_body = step_body.replace("{TIMEOUT_SECONDS_BLOCK}", '')
-    if "CLOSE_PIPELINE" in step.keys():
-        step_body = step_body.replace("{CLOSE_PIPELINE_BLOCK}", ',"PclosePipeline": "True"')
-    else:
-        step_body = step_body.replace("{CLOSE_PIPELINE_BLOCK}", '')
+
+    #TODO continue if fail logic
     if "CONTINUE_IF_FAIL" in step.keys():
         step_body = step_body.replace("{CONTINUE_IF_FAIL_BLOCK}", ',"PcontinueIfFail": "True"')
     else:
@@ -239,9 +183,8 @@ def process_step_async(level_id, cloud_funciton_level_1_id, step, FUNCTION_ID_NA
     step_body = cloud_function_async_template.replace("{JOB_ID}", step_name)
     step_body = step_body.replace("{LEVEL_ID}", level_id)
     step_body = step_body.replace("{CLOUD_FUNCTION_ID}", cloud_funciton_level_1_id)
-    step_body = step_body.replace("{CLOUD_FUNCTION_ID_TO_INVOKE}", FUNCTION_ID_NAME)
-    step_body = step_body.replace("{CLOUD_FUNCTION_STATUS_TO_INVOKE}", FUNCTION_STATUS_NAME)
-    step_body = step_body.replace("{ENVIRONMENT}", exec_config.get("pEnvironment"))
+    step_body = step_body.replace("{CLOUD_FUNCTION_ID_TO_INVOKE}", assemble_cloud_function_id(FUNCTION_ID_NAME,exec_config))
+    step_body = step_body.replace("{CLOUD_FUNCTION_STATUS_TO_INVOKE}",assemble_cloud_function_id(FUNCTION_STATUS_NAME,exec_config))
     step_body = step_body.replace("{JOB_IDENTIFIER}", step.get("JOB_ID"))
     step_body = step_body.replace("{JOB_NAME}", step.get("JOB_NAME"))
     step_body = step_body.replace("{WAIT_TIME_SECONDS}", step.get("WAIT_TIME_SECONDS"))
@@ -254,10 +197,6 @@ def process_step_async(level_id, cloud_funciton_level_1_id, step, FUNCTION_ID_NA
         step_body = step_body.replace("{READ_INPUT_FROM}", step.get("READ_INPUT_FROM"))
     else:
         step_body = step_body.replace("{READ_INPUT_FROM}", "ENV")
-    if "LAST_STEP" in step.keys():
-        step_body = step_body.replace("{LAST_STEP}", step.get("LAST_STEP"))
-    else:
-        step_body = step_body.replace("{LAST_STEP}", "False")
     if "TIMEOUT_SECONDS" in step.keys():
         step_body = step_body.replace("{TIMEOUT_SECONDS_BLOCK}",
                                       '"TimeoutSeconds": ' + step.get("TIMEOUT_SECONDS") + ',')
@@ -276,6 +215,7 @@ def process_step_async(level_id, cloud_funciton_level_1_id, step, FUNCTION_ID_NA
     return step_body
 
 
+#TODO Boolean Choice Logic
 def process_step_boolean_choice(step):
     """method to process step boolean choice"""
     step_name = step.get("JOB_ID") + "_" + step.get("JOB_NAME")
@@ -294,27 +234,18 @@ def process_step_workflows(workflows_id, step):
     return step_body
 
 
-def find_step_by_id(step_id):
-    """method to find step by id"""
-    for level in workflow_config:
-        for thread in level.get("THREADS"):
-            for step in thread.get("STEPS"):
-                if step.get("JOB_ID") == step_id:
-                    return step
-    return None
-
 
 def process_next_step(steps, step, index, level_id, thread_id, step_body, single_thread):
     """method to process next step"""
-    if step.get("TYPE") in ('sync', 'unload', 'async', 'write_results', 'workflows'):
+    if step.get("TYPE") in ('sync', 'async', 'workflows'):
         if "NEXT" not in step.keys():
             try:
                 next_step = steps[index + 1]
                 next_step_name = next_step.get("JOB_ID") + "_" + next_step.get("JOB_NAME")
                 step_body = step_body.replace("{NEXT_JOB_ID}", next_step_name)
             except (KeyError, IndexError):
-                if level_exists(int(level_id) + 1) and single_thread:
-                    if level_exists_and_is_parallel(int(level_id) + 1):
+                if level_exists(int(level_id) + 1, workflow_config) and single_thread:
+                    if level_exists_and_is_parallel(int(level_id) + 1, workflow_config):
                         step_body = step_body.replace("{NEXT_JOB_ID}",
                                                  "Level_" + str(int(level_id) + 1))
                     else:
@@ -338,56 +269,6 @@ def process_next_step(steps, step, index, level_id, thread_id, step_body, single
         step_body = step_body.replace("{NEXT_JOB_ID_FALSE}", false_next_step_name)
     return step_body
 
-
-def level_exists(level_number):
-    for level in workflow_config:
-        if int(level.get("LEVEL_ID")) == level_number:
-            return True
-    return False
-
-def level_exists_and_is_parallel(level_number):
-    for level in workflow_config:
-        if int(level.get("LEVEL_ID")) == level_number:
-            if len(level.get("THREADS")) > 1:
-                return True
-    return False
-
-def write_result(output_file, content):
-    """
-    Function to write result to a file
-    :param output_file:
-    :param content:
-    :return:
-    """
-    try:
-        file_out = open(output_file, "w", encoding="utf-8")
-        file_out.write(content)
-        file_out.close()
-    except Exception as err:
-        print('Error writing on output file: ' + str(type(err)))
-        raise err
-
-
-def assemble_cloud_function_id(name):
-    """
-    Function to assemble cloud function ID
-    :param name: name of the Cloud function
-    :return: if of the cloud function
-    """
-    project_id = exec_config.get("pProjectId")
-    region = exec_config.get("pRegion")
-    return f"projects/{project_id}/locations/{region}/functions/{name}"
-
-
-def assemble_workflows_id(name):
-    """
-    Function to assemble cloud workflows id
-    :param name: name of the Cloud Workflow
-    :return: workflows id
-    """
-    project_id = exec_config.get("pProjectId")
-    region = exec_config.get("pRegion")
-    return f"projects/{project_id}/locations/{region}/workflows/{name}"
 
 
 main()
