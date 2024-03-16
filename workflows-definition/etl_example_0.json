@@ -9,8 +9,8 @@
             "JOB_ID": "J01",
             "JOB_NAME": "etl_1_load_step",
             "TYPE": "async",
-            "FUNCTION_ID_NAME": "dataflow-executor",
-            "FUNCTION_STATUS_NAME": "dataflow-executor",
+            "FUNCTION_ID_NAME": "orch-framework-dataflow-executor",
+            "FUNCTION_STATUS_NAME": "orch-framework-dataflow-executor",
             "WAIT_TIME_SECONDS": "20",
             "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12"
           }
@@ -23,8 +23,8 @@
             "JOB_ID": "J02",
             "JOB_NAME": "etl_2_trnf_step2",
             "TYPE": "async",
-            "FUNCTION_ID_NAME": "bigquery-executor",
-            "FUNCTION_STATUS_NAME": "bigquery-executor",
+            "FUNCTION_ID_NAME": "orch-framework-simple-dataform-query-executor",
+            "FUNCTION_STATUS_NAME": "orch-framework-simple-dataform-query-executor",
             "WAIT_TIME_SECONDS": "5",
             "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "10"
           }

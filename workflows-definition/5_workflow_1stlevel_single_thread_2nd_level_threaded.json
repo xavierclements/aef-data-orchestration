@@ -9,8 +9,8 @@
             "JOB_ID": "J01",
             "JOB_NAME": "etl_step_1",
             "TYPE": "async",
-            "FUNCTION_ID_NAME": "bigquery-executor",
-            "FUNCTION_STATUS_NAME": "bigquery-executor",
+            "FUNCTION_ID_NAME": "orch-framework-simple-dataform-query-executor",
+            "FUNCTION_STATUS_NAME": "orch-framework-simple-dataform-query-executor",
             "WAIT_TIME_SECONDS": "10",
             "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12"
           },
@@ -18,8 +18,8 @@
             "JOB_ID": "J02",
             "JOB_NAME": "etl_step_2",
             "TYPE": "async",
-            "FUNCTION_ID_NAME": "bigquery-executor",
-            "FUNCTION_STATUS_NAME": "bigquery-executor",
+            "FUNCTION_ID_NAME": "orch-framework-simple-dataform-query-executor",
+            "FUNCTION_STATUS_NAME": "orch-framework-simple-dataform-query-executor",
             "WAIT_TIME_SECONDS": "10",
             "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12"
           },
@@ -27,8 +27,8 @@
             "JOB_ID": "J03",
             "JOB_NAME": "etl_step_3",
             "TYPE": "async",
-            "FUNCTION_ID_NAME": "bigquery-executor",
-            "FUNCTION_STATUS_NAME": "bigquery-executor",
+            "FUNCTION_ID_NAME": "orch-framework-simple-dataform-query-executor",
+            "FUNCTION_STATUS_NAME": "orch-framework-simple-dataform-query-executor",
             "WAIT_TIME_SECONDS": "10",
             "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12"
           }
@@ -46,8 +46,8 @@
             "JOB_ID": "J05",
             "JOB_NAME": "etl_step_1",
             "TYPE": "async",
-            "FUNCTION_ID_NAME": "bigquery-executor",
-            "FUNCTION_STATUS_NAME": "bigquery-executor",
+            "FUNCTION_ID_NAME": "orch-framework-simple-dataform-query-executor",
+            "FUNCTION_STATUS_NAME": "orch-framework-simple-dataform-query-executor",
             "WAIT_TIME_SECONDS": "10",
             "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12"
           },
@@ -55,8 +55,8 @@
             "JOB_ID": "J06",
             "JOB_NAME": "etl_step_2",
             "TYPE": "async",
-            "FUNCTION_ID_NAME": "bigquery-executor",
-            "FUNCTION_STATUS_NAME": "bigquery-executor",
+            "FUNCTION_ID_NAME": "orch-framework-simple-dataform-query-executor",
+            "FUNCTION_STATUS_NAME": "orch-framework-simple-dataform-query-executor",
             "WAIT_TIME_SECONDS": "10",
             "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12"
           },
@@ -64,8 +64,8 @@
             "JOB_ID": "J07",
             "JOB_NAME": "etl_step_3",
             "TYPE": "async",
-            "FUNCTION_ID_NAME": "bigquery-executor",
-            "FUNCTION_STATUS_NAME": "bigquery-executor",
+            "FUNCTION_ID_NAME": "orch-framework-simple-dataform-query-executor",
+            "FUNCTION_STATUS_NAME": "orch-framework-simple-dataform-query-executor",
             "WAIT_TIME_SECONDS": "10",
             "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12"
           }
@@ -78,8 +78,8 @@
             "JOB_ID": "J08",
             "JOB_NAME": "etl_step_1_1",
             "TYPE": "async",
-            "FUNCTION_ID_NAME": "bigquery-executor",
-            "FUNCTION_STATUS_NAME": "bigquery-executor",
+            "FUNCTION_ID_NAME": "orch-framework-simple-dataform-query-executor",
+            "FUNCTION_STATUS_NAME": "orch-framework-simple-dataform-query-executor",
             "WAIT_TIME_SECONDS": "10",
             "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12"
           }

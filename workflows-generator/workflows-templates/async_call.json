@@ -15,8 +15,7 @@
                                                       execution_id: "${args.execution_id}"
                                                       job_name: "{JOB_ID}"
                                                       function_url_to_call: "{CLOUD_FUNCTION_ID_TO_INVOKE}"
-                                                      start_date: "${args.start_date}"
-                                                      end_date: "${args.end_date}"
+                                                      query_variables: "${args.query_variables}"
                                               result: async_job_id_{LEVEL_ID}
                                               next: "{JOB_ID}_Wait"
                                           - {JOB_ID}_Wait:
@@ -39,8 +38,7 @@
                                                       execution_id: "${args.execution_id}"
                                                       job_name: "{JOB_ID}"
                                                       function_url_to_call: "{CLOUD_FUNCTION_STATUS_TO_INVOKE}"
-                                                      start_date: "${args.start_date}"
-                                                      end_date: "${args.end_date}"
+                                                      query_variables: "${args.query_variables}"
                                               result: job_status_{LEVEL_ID}
                                               next: "{JOB_ID}_EvaluateStatus"
                                           - {JOB_ID}_EvaluateStatus:

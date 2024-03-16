@@ -5,14 +5,10 @@
     },
     {
         "ParameterKey": "pProjectID",
-        "ParameterValue": "dp-111-orc"
+        "ParameterValue": "dp-111-trf"
     },
 	{
-        "ParameterKey": "pFunctionStepAsynchronousName",
-        "ParameterValue": "async-function"
-    },
-	{
-        "ParameterKey": "pFunctionStepSynchronousName",
-        "ParameterValue": "sync-function"
+        "ParameterKey": "pFunctionIntermediateName",
+        "ParameterValue": "orch-framework-intermediate-function"
     }
 ]

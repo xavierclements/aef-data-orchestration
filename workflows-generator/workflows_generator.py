@@ -118,18 +118,17 @@ def process_threads(threads, level_id):
 def process_steps(steps, level_id, thread_id, single_thread):
     """method to process steps"""
     step_bodies = []
-    cloud_function_sync_name = exec_config.get("pFunctionStepSynchronousName")
-    cloud_function_async_name = exec_config.get("pFunctionStepAsynchronousName")
+    cloud_function_intermediate_name = exec_config.get("pFunctionIntermediateName")
 
     for index, step in enumerate(steps):
         step_body = ''
         if step.get("TYPE") == 'sync':
             step_body = process_step_sync(
-                assemble_cloud_function_id(cloud_function_sync_name, exec_config), step,
+                assemble_cloud_function_id(cloud_function_intermediate_name, exec_config), step,
                 step.get("FUNCTION_NAME"))
         elif step.get("TYPE") == 'async':
             step_body = process_step_async(level_id,
-                assemble_cloud_function_id(cloud_function_async_name, exec_config), step,
+                assemble_cloud_function_id(cloud_function_intermediate_name, exec_config), step,
                 step.get("FUNCTION_ID_NAME"),
                 step.get("FUNCTION_STATUS_NAME"))
         elif step.get("TYPE") == 'boolean_choice':
