@@ -12,7 +12,7 @@
                                                   body:
                                                       call_type: "get_id"
                                                       workflow_name: "${args.workflow_name}"
-                                                      execution_id: "${args.execution_id}"
+                                                      execution_id: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
                                                       job_name: "{JOB_ID}"
                                                       function_url_to_call: "{CLOUD_FUNCTION_ID_TO_INVOKE}"
                                                       query_variables: "${args.query_variables}"
@@ -35,7 +35,7 @@
                                                       call_type: "get_status"
                                                       async_job_id: ${async_job_id_{LEVEL_ID}.body}
                                                       workflow_name: "${args.workflow_name}"
-                                                      execution_id: "${args.execution_id}"
+                                                      execution_id: ${sys.get_env("GOOGLE_CLOUD_WORKFLOW_EXECUTION_ID")}
                                                       job_name: "{JOB_ID}"
                                                       function_url_to_call: "{CLOUD_FUNCTION_STATUS_TO_INVOKE}"
                                                       query_variables: "${args.query_variables}"
