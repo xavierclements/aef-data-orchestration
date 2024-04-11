@@ -24,7 +24,7 @@
                                                           "transitive_dependencies_included": True
                                                         }
                                },
-                               trigger_rule='all_done'
+                               trigger_rule='all_success'
                            )
 
                            is_workflow_{JOB_ID}_invocation_done = DataformWorkflowInvocationStateSensor(

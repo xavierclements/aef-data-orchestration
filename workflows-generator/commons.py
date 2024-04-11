@@ -104,7 +104,6 @@ def assemble_cloud_function_id(name, exec_config):
     return f"https://{region}-{project_id}.cloudfunctions.net/{name}"
 
 
-#TODO assemble workflows real path
 def assemble_workflows_id(name, exec_config):
     """
     Function to assemble cloud workflows id

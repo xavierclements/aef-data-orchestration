@@ -1,6 +1,6 @@
-WORKFLOW=2_workflow_threaded_1_level
+WORKFLOW=1_workflow_single_thread_1_level_composer
 
-python3 composer_dag_generator.py \
+python3 orchestration_generator.py \
 ../workflows-definition/$WORKFLOW.json \
 ../workflows-definition/platform-parameters-dev.json \
 result-$WORKFLOW.py \111111111111 \

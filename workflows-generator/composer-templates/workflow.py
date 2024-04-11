@@ -33,42 +33,11 @@ from airflow.providers.google.cloud.operators.dataform import (
 from google.cloud.dataform_v1beta1 import WorkflowInvocation
 
 # --------------------------------------------------------------------------------
-# Set variables - Needed for the DEMO
+# Set variables - Variables nneds to be created manually
 # --------------------------------------------------------------------------------
-BQ_LOCATION = Variable.get("BQ_LOCATION")
-DATA_CAT_TAGS = Variable.get("DATA_CAT_TAGS", deserialize_json=True)
-DWH_LAND_PRJ = Variable.get("DWH_LAND_PRJ")
-DWH_LAND_BQ_DATASET = Variable.get("DWH_LAND_BQ_DATASET")
-DWH_LAND_GCS = Variable.get("DWH_LAND_GCS")
-DWH_CURATED_PRJ = Variable.get("DWH_CURATED_PRJ")
-DWH_CURATED_BQ_DATASET = Variable.get("DWH_CURATED_BQ_DATASET")
-DWH_CURATED_GCS = Variable.get("DWH_CURATED_GCS")
-DWH_CONFIDENTIAL_PRJ = Variable.get("DWH_CONFIDENTIAL_PRJ")
-DWH_CONFIDENTIAL_BQ_DATASET = Variable.get("DWH_CONFIDENTIAL_BQ_DATASET")
-DWH_CONFIDENTIAL_GCS = Variable.get("DWH_CONFIDENTIAL_GCS")
-GCP_REGION = Variable.get("GCP_REGION")
-DRP_PRJ = Variable.get("DRP_PRJ")
-DRP_BQ = Variable.get("DRP_BQ")
-DRP_GCS = Variable.get("DRP_GCS")
-DRP_PS = Variable.get("DRP_PS")
-LOD_PRJ = Variable.get("LOD_PRJ")
-LOD_GCS_STAGING = Variable.get("LOD_GCS_STAGING")
-LOD_NET_VPC = Variable.get("LOD_NET_VPC")
-LOD_NET_SUBNET = Variable.get("LOD_NET_SUBNET")
-LOD_SA_DF = Variable.get("LOD_SA_DF")
-ORC_PRJ = Variable.get("ORC_PRJ")
-ORC_GCS = Variable.get("ORC_GCS")
-TRF_PRJ = Variable.get("TRF_PRJ")
-TRF_GCS_STAGING = Variable.get("TRF_GCS_STAGING")
-TRF_NET_VPC = Variable.get("TRF_NET_VPC")
-TRF_NET_SUBNET = Variable.get("TRF_NET_SUBNET")
-TRF_SA_DF = Variable.get("TRF_SA_DF")
-TRF_SA_BQ = Variable.get("TRF_SA_BQ")
-DF_KMS_KEY = Variable.get("DF_KMS_KEY", "")
-#TODO Fix Variables
-DF_REGION = "europe-west2"
-DF_REPOSITORY_ID = Variable.get("DF_REPOSITORY_ID", "TestRepoDataform")
-DF_ZONE = Variable.get("GCP_REGION") + "-b"
+DATAFORM_PROJECT_ID = Variable.get("DATAFORM_PROJECT_ID")
+DATAFORM_REGION = Variable.get("DATAFORM_REGION")
+DATAFORM_REPOSITORY_ID = Variable.get("DATAFORM_REPOSITORY_ID")
 
 # --------------------------------------------------------------------------------
 # Set default arguments
@@ -87,20 +56,10 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 0,
-    'project_id': TRF_PRJ,
-    'region': DF_REGION,
-    'repository_id': DF_REPOSITORY_ID,
-    'retry_delay': datetime.timedelta(minutes=5),
-    'dataflow_default_options': {
-        'location': DF_REGION,
-        'zone': DF_ZONE,
-        'stagingLocation': LOD_GCS_STAGING,
-        'tempLocation': LOD_GCS_STAGING + "/tmp",
-        'serviceAccountEmail': LOD_SA_DF,
-        'subnetwork': LOD_NET_SUBNET,
-        'ipConfiguration': "WORKER_IP_PRIVATE",
-        'kmsKeyName' : DF_KMS_KEY
-    },
+    'project_id': DATAFORM_PROJECT_ID,
+    'region': DATAFORM_REGION,
+    'repository_id': DATAFORM_REPOSITORY_ID,
+    'retry_delay': datetime.timedelta(minutes=5)
 }
 
 start_date_str = yesterday.strftime('%Y-%m-%d')
@@ -110,7 +69,7 @@ end_date_str = datetime.datetime.today().strftime('%Y-%m-%d')
 # --------------------------------------------------------------------------------
 
 with models.DAG(
-        'generated_dag',
+        '<<DAG_NAME>>',
         default_args=default_args,
         params={
             "start_date_str": start_date_str,
