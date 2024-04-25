@@ -4,6 +4,7 @@ venv/*
 **/.terraform
 **/terraform.tfstate*
 **/result*.json
+**/result*.yaml
 **/terraform.tfvars
 **/*.auto.tfvars
 **/.terraform.tfstate.lock.info

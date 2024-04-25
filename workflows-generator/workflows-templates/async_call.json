@@ -17,6 +17,7 @@
                                                       function_url_to_call: "{CLOUD_FUNCTION_ID_TO_INVOKE}"
                                                       query_variables: "${args.query_variables}"
                                                       workflow_properties: "${args.workflow_properties}"
+                                                      {STEP_PROPERTIES_BLOCK}
                                               result: async_job_id_{LEVEL_ID}
                                               next: "{JOB_ID}_Wait"
                                           - {JOB_ID}_Wait:

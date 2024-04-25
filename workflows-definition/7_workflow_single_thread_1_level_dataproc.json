@@ -14,7 +14,8 @@
               "FUNCTION_ID_NAME": "orch-framework-dataproc-serverless-app-executor",
               "FUNCTION_STATUS_NAME": "orch-framework-dataproc-serverless-app-executor",
               "WAIT_TIME_SECONDS": "10",
-              "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12"
+              "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12",
+              "STEP_PROPERTIES": "{\"spark_app_properties\":{\"spark.executor.instances\":\"3\",\"spark.executor.cores\":\"4\"}}"
             },
             {
               "JOB_ID": "J02",

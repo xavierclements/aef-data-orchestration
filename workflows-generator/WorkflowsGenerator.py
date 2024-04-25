@@ -178,6 +178,12 @@ class WorkflowsGenerator:
             step_body = step_body.replace("{CONTINUE_IF_FAIL_BLOCK}", ',"PcontinueIfFail": "True"')
         else:
             step_body = step_body.replace("{CONTINUE_IF_FAIL_BLOCK}", '')
+        if "STEP_PROPERTIES" in step.keys():
+            step_body = step_body.replace("{STEP_PROPERTIES_BLOCK}", "step_properties: > \n"
+                                          + "                                                                 "
+                                          + step.get("STEP_PROPERTIES"))
+        else:
+            step_body = step_body.replace("{STEP_PROPERTIES_BLOCK}", str(''))
         return step_body
 
 
