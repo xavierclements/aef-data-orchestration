@@ -84,6 +84,10 @@ def write_result(output_file, content):
     :return:
     """
     try:
+        # Create directories if they don't exist
+        dirname = os.path.dirname(output_file)
+        if dirname:  # Only create directories if the path isn't just a filename
+            os.makedirs(dirname, exist_ok=True)
         file_out = open(output_file, "w", encoding="utf-8")
         file_out.write(content)
         file_out.close()

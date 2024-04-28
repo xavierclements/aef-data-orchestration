@@ -31,8 +31,8 @@ This approach enables data analysts to build intricate data pipelines and reliab
 ### 2. Manual Execution
 ```
 python3 workflows_generator.py \
-../workflows-definition/etl_example_1.json \
-../workflows-definition/platform-parameters-dev.json \
+../workflow-definitions/etl_example_1.json \
+../workflow-definitions/platform-parameters-dev.json \
 workflows_etl_example_1.json \
 False
 ```
