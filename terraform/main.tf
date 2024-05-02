@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
+
+resource "local_file" "parameters_file" {
+  filename = "../workflow-definitions/platform-parameters-tfe.json"
+  content  = jsonencode(local.workflows_generator_params)
+}
+
+
 resource "null_resource" "deploy_cloud_workflows" {
   for_each = var.deploy_cloud_workflows ? local.cloud_workflows_filenames : []
   provisioner "local-exec" {
     command = <<EOF
       python3 ../workflows-generator/orchestration_generator.py \
       ../workflow-definitions/${each.value} \
-      ../workflow-definitions/${var.workflows_parameter_filename} \
+      ../workflow-definitions/platform-parameters-tfe.json \
       ../cloud-workflows/${each.value} \
       False
     EOF
@@ -28,6 +35,7 @@ resource "null_resource" "deploy_cloud_workflows" {
   triggers = {
     always_run = timestamp()
   }
+  depends_on = [local_file.parameters_file]
 }
 
 resource "google_workflows_workflow" "workflows" {

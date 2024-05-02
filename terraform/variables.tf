@@ -38,9 +38,3 @@ variable "workflows_log_level" {
   default     = "LOG_ERRORS_ONLY"
   nullable    = false
 }
-
-variable "workflows_parameter_filename" {
-  description = "Name of the JSON parameters file in the workflow-definitions folder that define variables like environment."
-  type        = string
-  nullable    = true
-}

@@ -15,4 +15,20 @@ locals {
     for filename, file_content in local.workflow_files : filename
     if (try(file_content.engine, null) == "composer")
   ]
+
+  workflows_generator_params = [
+    {
+      "ParameterKey" : "pRegion",
+      "ParameterValue" : var.region
+    },
+    {
+      "ParameterKey" : "pProjectID",
+      "ParameterValue" : var.project
+    },
+    {
+      "ParameterKey" : "pFunctionIntermediateName",
+      "ParameterValue" : "orch-framework-intermediate-function"
+    }
+  ]
+
 }

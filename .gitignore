@@ -35,6 +35,7 @@ fast/**/[0-9]*.auto.tfvars*
 **/node_modules
 fast/**/globals.auto.tfvars.json
 cloud-workflows/*
+workflow-definitions/platform-parameters-tfe.json
 examples/cloud-operations/binauthz/tenant-setup.yaml
 examples/cloud-operations/binauthz/app/app.yaml
 env/
