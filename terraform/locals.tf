@@ -27,7 +27,7 @@ locals {
     },
     {
       "ParameterKey" : "pFunctionIntermediateName",
-      "ParameterValue" : "orch-framework-intermediate-function"
+      "ParameterValue" : "orch-framework-intermediate"
     }
   ]
 

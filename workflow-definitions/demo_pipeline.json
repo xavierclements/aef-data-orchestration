@@ -1,0 +1,25 @@
+{
+  "engine": "cloud_workflows",
+  "definition": [
+    {
+      "LEVEL_ID": "1",
+      "THREADS": [
+        {
+          "THREAD_ID": "1",
+          "STEPS": [
+            {
+              "JOB_ID": "J01",
+              "JOB_NAME": "run_dataform_tag",
+              "TYPE": "async",
+              "FUNCTION_ID_NAME": "dataform-tag-executor",
+              "FUNCTION_STATUS_NAME": "dataform-tag-executor",
+              "WAIT_TIME_SECONDS": "20",
+              "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12",
+              "STEP_PROPERTIES": "{\"repository_name\":\"sample-repo-1\",\"branch\":\"main\",\"tags\":[\"process\",\"transformation\"]}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
