@@ -24,7 +24,6 @@ class WorkflowsGenerator:
         self.level_template = ''
         self.thread_template = ''
         self.cloud_function_async_template = ''
-        self.boolean_choice_template = ''
         self.workflows_sync_template = ''
         self.cloud_function_sync_template = ''
         self.workflows_folder = "workflows-templates"
@@ -104,8 +103,6 @@ class WorkflowsGenerator:
                     assemble_cloud_function_id(cloud_function_intermediate_name, self.exec_config), step,
                     step.get("FUNCTION_ID_NAME"),
                     step.get("FUNCTION_STATUS_NAME"))
-            elif step.get("TYPE") == 'boolean_choice':
-                step_body = self.process_step_boolean_choice(step)
             #TODO workflows functionality
             elif step.get("TYPE") == 'workflows':
                 workflows_name = step.get("workflows_name")
@@ -187,17 +184,6 @@ class WorkflowsGenerator:
         return step_body
 
 
-    #TODO Boolean Choice Logic
-    def process_step_boolean_choice(self,step):
-        """method to process step boolean choice"""
-        step_name = step.get("JOB_ID") + "_" + step.get("JOB_NAME")
-        step_body = self.boolean_choice_template.replace("{JOB_ID}", step_name)
-        origin_step = find_step_by_id(step.get("READ_INPUT_FROM"))
-        step_body = step_body.replace("{RESULT_VARIABLE_NAME}",
-                                      origin_step.get("RESULT_VARIABLE_NAME"))
-        return step_body
-
-
     def process_step_workflows(self,workflows_id, step):
         """method to process step of workflows type"""
         step_name = step.get("JOB_ID") + "_" + step.get("JOB_NAME")
@@ -232,12 +218,6 @@ class WorkflowsGenerator:
                 next_step = find_step_by_id(step.get("NEXT"))
                 next_step_name = next_step.get("JOB_ID") + "_" + next_step.get("JOB_NAME")
                 step_body = step_body.replace("{NEXT_JOB_ID}", next_step_name)
-        elif step.get("TYPE") in ('boolean_choice'):
-            true_step = find_step_by_id(step.get("TRUE_JOB"))
-            false_step = find_step_by_id(step.get("FALSE_JOB"))
-            true_next_step_name = true_step.get("JOB_ID") + "_" + true_step.get("JOB_NAME")
-            step_body = step_body.replace("{NEXT_JOB_ID_TRUE}", true_next_step_name)
-            false_next_step_name = false_step.get("JOB_ID") + "_" + false_step.get("JOB_NAME")
-            step_body = step_body.replace("{NEXT_JOB_ID_FALSE}", false_next_step_name)
+
         return step_body
 
