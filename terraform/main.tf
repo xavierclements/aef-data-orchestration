@@ -16,7 +16,7 @@
 
 
 resource "local_file" "parameters_file" {
-  filename = "../workflow-definitions/platform-parameters-tfe.json"
+  filename = "../workflow-definitions/platform-parameters-${var.environment}.json"
   content  = jsonencode(local.workflows_generator_params)
 }
 
@@ -27,7 +27,7 @@ resource "null_resource" "deploy_cloud_workflows" {
     command = <<EOF
       python3 ../workflows-generator/orchestration_generator.py \
       ../workflow-definitions/${each.value} \
-      ../workflow-definitions/platform-parameters-tfe.json \
+      ../workflow-definitions/platform-parameters-${var.environment}.json \
       ../cloud-workflows/${each.value} \
       False
     EOF

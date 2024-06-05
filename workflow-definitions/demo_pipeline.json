@@ -14,18 +14,16 @@
               "FUNCTION_ID_NAME": "dataflow-flextemplate-job-executor",
               "FUNCTION_STATUS_NAME": "dataflow-flextemplate-job-executor",
               "WAIT_TIME_SECONDS": "30",
-              "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12",
-              "STEP_PROPERTIES": "{\"dataflow_job_params\":\"gs://pso-amex-data-platform2_aef_jobs_bucket/dataflow/flextemplates/sample_jdbc_dataflow_ingestion.json\"}"
+              "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12"
             },
             {
-              "JOB_ID": "J01",
+              "JOB_ID": "J02",
               "JOB_NAME": "run_dataform_tag",
               "TYPE": "async",
               "FUNCTION_ID_NAME": "dataform-tag-executor",
               "FUNCTION_STATUS_NAME": "dataform-tag-executor",
               "WAIT_TIME_SECONDS": "20",
-              "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12",
-              "STEP_PROPERTIES": "{\"repository_name\":\"sample-repo-1\",\"branch\":\"main\",\"tags\":[\"process\",\"transformation\"]}"
+              "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12"
             }
           ]
         }

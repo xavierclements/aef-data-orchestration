@@ -28,6 +28,10 @@ locals {
     {
       "ParameterKey" : "pFunctionIntermediateName",
       "ParameterValue" : "orch-framework-intermediate"
+    },
+    {
+      "ParameterKey" : "pJobsDefinitionsBucket",
+      "ParameterValue" : "${var.data_transformation_project}_aef_jobs_bucket"
     }
   ]
 
