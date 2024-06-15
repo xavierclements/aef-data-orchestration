@@ -21,13 +21,13 @@ variable "project" {
 }
 
 variable "data_transformation_project" {
-  description = "Project where the data transformation jobs reside (will be used to infer bucket storing job parameter json files)."
+  description = "Project where the data transformation jobs definitions reside (will be used to infer bucket storing job parameter json files)."
   type        = string
   nullable    = false
 }
 
 variable "region" {
-  description = "Region where the cloud workflows will be created."
+  description = "Region where the Cloud Workflows will be created."
   type        = string
   nullable    = false
 }
