@@ -42,6 +42,7 @@
                                                       function_url_to_call: "{CLOUD_FUNCTION_STATUS_TO_INVOKE}"
                                                       query_variables: "${args.query_variables}"
                                                       workflow_properties: "${args.workflow_properties}"
+                                                      {STEP_PROPERTIES_BLOCK}
                                               result: job_status_{LEVEL_ID}
                                               next: "{JOB_ID}_EvaluateStatus"
                                           - {JOB_ID}_EvaluateStatus:

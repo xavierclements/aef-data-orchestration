@@ -11,8 +11,8 @@
               "JOB_ID": "J01",
               "JOB_NAME": "etl_step_1",
               "TYPE": "async",
-              "FUNCTION_ID_NAME": "orch-framework-dataproc-serverless-app-executor",
-              "FUNCTION_STATUS_NAME": "orch-framework-dataproc-serverless-app-executor",
+              "FUNCTION_ID_NAME": "orch-framework-dataproc-serverless-job-executor",
+              "FUNCTION_STATUS_NAME": "orch-framework-dataproc-serverless-job-executor",
               "WAIT_TIME_SECONDS": "10",
               "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12",
               "STEP_PROPERTIES": "{\"spark_app_properties\":{\"spark.executor.instances\":\"3\",\"spark.executor.cores\":\"4\"}}"
