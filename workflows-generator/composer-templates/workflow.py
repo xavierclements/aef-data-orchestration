@@ -17,11 +17,13 @@
 # --------------------------------------------------------------------------------
 
 import datetime
-
+import json
+import re
 from airflow import models
 from airflow.models.variable import Variable
-from airflow.providers.google.cloud.operators.dataflow import DataflowTemplatedJobStartOperator
+from airflow.providers.google.cloud.operators.dataflow import DataflowStartFlexTemplateOperator
 from airflow.operators import empty
+from airflow.providers.google.cloud.hooks.gcs import GCSHook
 from airflow.utils.task_group import TaskGroup
 from airflow.providers.google.cloud.operators.bigquery import  BigQueryInsertJobOperator
 from airflow.operators.empty import EmptyOperator
@@ -31,13 +33,36 @@ from airflow.providers.google.cloud.operators.dataform import (
     DataformCreateWorkflowInvocationOperator,
 )
 from google.cloud.dataform_v1beta1 import WorkflowInvocation
+from google.cloud import storage
 
 # --------------------------------------------------------------------------------
-# Set variables - Variables nneds to be created manually
+# Read variables from GCS parameters file for the job
 # --------------------------------------------------------------------------------
-DATAFORM_PROJECT_ID = Variable.get("DATAFORM_PROJECT_ID")
-DATAFORM_REGION = Variable.get("DATAFORM_REGION")
-DATAFORM_REPOSITORY_ID = Variable.get("DATAFORM_REPOSITORY_ID")
+storage_client = storage.Client()
+jobs_bucket = Variable.get("DATA_TRANSFORMATION_GCS_BUCKET")
+
+def extract_job_params(job_name, function_name, encoding='utf-8'):
+    """Extracts parameters from a JSON job file.
+
+    Args:
+        bucket_name: Bucket containing the JSON parameters file .
+
+    Returns:
+        A dictionary containing the extracted parameters.
+    """
+
+    json_file_path = f'gs://{jobs_bucket}/{function_name}/{job_name}.json'
+
+    parts = json_file_path.replace("gs://", "").split("/")
+    bucket_name = parts[0]
+    object_name = "/".join(parts[1:])
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(object_name)
+
+    json_data = blob.download_as_bytes()
+    params = json.loads(json_data.decode(encoding))
+    return params
+
 
 # --------------------------------------------------------------------------------
 # Set default arguments
@@ -56,11 +81,10 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 0,
-    'project_id': DATAFORM_PROJECT_ID,
-    'region': DATAFORM_REGION,
-    'repository_id': DATAFORM_REPOSITORY_ID,
     'retry_delay': datetime.timedelta(minutes=5)
 }
+
+<<STEPS_ARGS>>
 
 start_date_str = yesterday.strftime('%Y-%m-%d')
 end_date_str = datetime.datetime.today().strftime('%Y-%m-%d')

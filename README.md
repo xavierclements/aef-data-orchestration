@@ -75,21 +75,74 @@ The provided Terraform code enables reading defined JSON data pipelines definiti
 │   ├── demo_pipeline.json
 │   └── ...
 ```
-2. Define your terraform variables.
-<!-- BEGIN TFDTFOC -->
-| name                                     | description                                                                                                                                                           | type        | required | default     |
-|------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------|----------|-------------|
-| [project](variables.tf#L16)             | Project where the cloud workflows or Composer DAGs (TODO) will be created.                                                                                            | string      | true     | -           |
-| [data_transformation_project](variables.tf#L24) | Project where the data transformation jobs definitions reside (will be used to infer bucket storing job parameter json files).                                        | string      | true     | -           |
-| [region](variables.tf#L32)              | Region where the Cloud Workflows will be created.                                                                                                                     | string      | true     | -           |
-| [environment](variables.tf#L40)         | AEF environment. Will be used to create the parameters file for Cloud Workflows: platform-parameters-$ENVIRONMENT.json                                                | string      | true     | -           |
-| [deploy_cloud_workflows](variables.tf#L48) | Controls whether cloud workflows is generated and deployed alongside Terraform resources. If false cloud workflows can be deployed as a next step in a CICD pipeline. | bool        | true     | -           |
-| [workflows_log_level](variables.tf#L56) | Describes the level of platform logging to apply to calls and call responses during executions of cloud workflows                                                     | string      | false    | LOG_ERRORS_ONLY |
+2. Define your terraform variables.  It is recommended creating a `.tfvars` file.
+<!-- BEGIN TFDOC -->
+| name                                     | description                                                                                                                                                           | type        | required | default                 |
+|------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------|----------|--------------------------|
+| [project](terraform/variables.tf#L16)             | Project where the cloud workflows or Composer DAGs will be created.                                                                                                   | string      | true     | -                       |
+| [region](terraform/variables.tf#L24)              | Region where the AEF data orchestration workflows will be deployed.                                                                                                   | string      | true     | -                       |
+| [environment](terraform/variables.tf#L32)         | AEF environment. Will be used to create the parameters file for Cloud Workflows: **platform-parameters-$ENVIRONMENT.json**                                            | string      | true     | -                       |
+| [data_transformation_project](terraform/variables.tf#L40) | Project where the data transformation jobs definitions reside (will be used to infer bucket storing job parameter json files).                                        | string      | true     | -                       |
+| [deploy_cloud_workflows](terraform/variables.tf#L48) | Controls whether cloud workflows is generated and deployed alongside Terraform resources. If false cloud workflows can be deployed as a next step in a CICD pipeline. | bool        | false    | `true`                  |
+| [deploy_composer_dags](terraform/variables.tf#L56)    | Controls whether Airflow DAGs are generated and deployed alongside Terraform resources. If false DAGs could be deployed as a next step in a CICD pipeline.            | bool        | false    | `false`                 |
+| [create_composer_environment](terraform/variables.tf#L64) | Controls whether a composer environment will be created, If false and **deploy_composer_dags** set to **true**, then **composer_bucket_name** needs to be set.        | bool        | false    | `false`                 |
+| [composer_bucket_name](terraform/variables.tf#L72) | If Composer environment is not created and deploy_composer_dags is set to true, then this will be used to upload DAGs to.                                             | string      | false    | -                       |
+| [composer_config](terraform/variables.tf#L80)         | Cloud Composer config.                                                                                                                                                | object      | false    | `{}`                    |
+| [workflows_log_level](terraform/variables.tf#L151)    | Describes the level of platform logging to apply to calls and call responses during executions of cloud workflows                                                     | string      | false    | `LOG_ERRORS_ONLY` |
 <!-- END TFDOC -->
 
 2.Run the Terraform Plan / Apply using the variables you defined.
+
+#### Example 
+
+```hcl
+project = "<PROJECT>"
+region  = "<REGION>"
+
+data_transformation_project = "<PROJECT>"
+environment                 = "dev"
+
+deploy_cloud_workflows      = true
+workflows_log_level         = "LOG_ERRORS_ONLY"
+
+deploy_composer_dags        = true
+create_composer_environment = true
+composer_config             = {
+  vpc              = "projects/<PROJECT>/global/networks/sample-vpc"
+  subnet           = "projects/<PROJECT>/regions/us-central1/subnetworks/default-us-central1"
+  cloud_sql        = "10.0.10.0/24"
+  gke_master       = "10.0.11.0/28"
+  environment_size = "ENVIRONMENT_SIZE_SMALL"
+  software_config  = {
+    image_version = "composer-2-airflow-2"
+    cloud_data_lineage_integration = true
+  }
+  workloads_config = {
+    scheduler = {
+      cpu        = 0.5
+      memory_gb  = 1.875
+      storage_gb = 1
+      count      = 1
+    }
+    web_server = {
+      cpu        = 0.5
+      memory_gb  = 1.875
+      storage_gb = 1
+    }
+    worker = {
+      cpu        = 0.5
+      memory_gb  = 1.875
+      storage_gb = 1
+      min_count  = 1
+      max_count  = 3
+    }
+  }
+}
+```
+
+#### Run Terraform Plan / Apply using the variables you defined.
 ```bash
-terraform plan -var 'project=<PROJECT>' -var 'data_transformation_project=<PROJECT>' -var 'environment=dev' -var 'region=<REGION>' -var 'deploy_cloud_workflows=true' 
+terraform plan -var-file="prod.tfvars"
 ```
 
 ## Integration with Analytics Engineering Framework

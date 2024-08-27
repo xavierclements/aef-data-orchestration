@@ -25,10 +25,10 @@ locals {
     if (try(file_content.engine, null) == "cloud_workflows")
   ])
 
-  composer_filenames = [
+  composer_filenames = toset([
     for filename, file_content in local.workflow_files : filename
     if (try(file_content.engine, null) == "composer")
-  ]
+  ])
 
   workflows_generator_params = [
     {
@@ -48,5 +48,14 @@ locals {
       "ParameterValue" : "${var.data_transformation_project}_aef_jobs_bucket"
     }
   ]
+  _env_variables = {
+    DATA_TRANSFORMATION_GCS_BUCKET = "${var.data_transformation_project}_aef_jobs_bucket"
+  }
+
+  composer_env_variables = {
+    for k, v in merge(
+      var.composer_config.software_config.env_variables, local._env_variables
+    ) : "AIRFLOW_VAR_${k}" => v
+  }
 
 }

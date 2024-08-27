@@ -24,8 +24,8 @@ class ComposerDagGenerator:
         self.workflow_template = ''
         self.level_template = ''
         self.thread_template = ''
-        self.async_call_dataform_template = ''
-        self.async_call_dataflow_jdbc_to_bq_template = ''
+        self.dataform_tag_executor_template = ''
+        self.dataflow_flextemplate_job_executor_template = ''
 
     def load_templates(self):
         """method for loading templates"""
@@ -33,18 +33,31 @@ class ComposerDagGenerator:
         self.level_template = read_template("level",self.generate_for_pipeline, "composer-templates", "py")
         self.thread_template = read_template("thread",self.generate_for_pipeline, "composer-templates", "py")
         #add new templates for other executors here
-        self.async_call_dataform_template = read_template("async_call_dataform", self.generate_for_pipeline, "composer-templates", "py")
-        self.async_call_dataflow_jdbc_to_bq_template = read_template("async_call_dataflow_jdbc_to_bq", self.generate_for_pipeline, "composer-templates", "py")
+        self.dataform_tag_executor_template = read_template("dataform_tag_executor", self.generate_for_pipeline, "composer-templates", "py")
+        self.dataflow_flextemplate_job_executor_template = read_template("dataflow_flextemplate_job_executor", self.generate_for_pipeline, "composer-templates", "py")
 
 
     def generate_workflows_body(self):
-        """method to generate cloud workflows body"""
+        """method to generate Airflow body"""
         levels = self.process_levels(self.workflow_config)
         workflow_body = self.workflow_template.replace("<<LEVELS>>", "".join(levels))
         workflow_body = workflow_body.replace("<<LEVEL_DEPENDENCIES>>", self.get_level_dependency_string(self.workflow_config))
         workflow_body = workflow_body.replace("<<DAG_NAME>>", self.json_file_name)
+        workflow_body = workflow_body.replace("<<STEPS_ARGS>>", self.process_steps_vars(self.workflow_config))
         return workflow_body
 
+    def process_steps_vars(self, config):
+        """Method to process steps vars"""
+        string_code = "{JOB_ID} = extract_job_params('{JOB_ID}','{FUNCTION_NAME}')\nfor key, value in {JOB_ID}.items():\n\tdefault_args['{JOB_ID}'+key] = value\n"
+        vars = [
+            string_code.format(
+                JOB_ID=step.get("JOB_NAME"), FUNCTION_NAME=step.get("COMPOSER_STEP")
+            )
+            for level in config
+            for thread in level.get("THREADS", [])
+            for step in thread.get("STEPS", [])
+        ]
+        return '\n'.join(vars)
 
     def get_level_dependency_string(self,config):
         level_names = []
@@ -93,7 +106,7 @@ class ComposerDagGenerator:
     def get_steps_dependency_string(self,steps):
         step_names = []
         for step in steps:
-            step_name = "task_" + step.get("JOB_ID") + "_" + step.get("JOB_NAME")
+            step_name = step.get("JOB_NAME")
             step_names.append(step_name)
         return " >> ".join(step_names)
 
@@ -108,26 +121,18 @@ class ComposerDagGenerator:
             step_bodies.append(step_body)
         return step_bodies
 
-
     def process_step_async(self,level_id, thread_id, step):
         """method to process async step"""
-        step_name = step.get("JOB_ID") + "_" + step.get("JOB_NAME")
+        step_name = step.get("JOB_NAME")
         step_body = ''
         ##Add new templates here
-        if "simple-dataform-query-executor" in step.get("COMPOSER_STEP"):
-            step_body = self.async_call_dataform_template.replace("{JOB_ID}", step_name)
-        if "dataflow-jdbc-to-bq-executor" in step.get("COMPOSER_STEP"):
-            step_body = self.async_call_dataflow_jdbc_to_bq_template.replace("{JOB_ID}", step_name)
+        if "dataform-tag-executor" in step.get("COMPOSER_STEP"):
+            step_body = self.dataform_tag_executor_template.replace("{JOB_ID}", step_name)
+        if "dataflow-flextemplate-job-executor" in step.get("COMPOSER_STEP"):
+            step_body = self.dataflow_flextemplate_job_executor_template.replace("{JOB_ID}", step_name)
         step_body = step_body.replace("{LEVEL_ID}", level_id)
         step_body = step_body.replace("{THREAD_ID}", thread_id)
         step_body = step_body.replace("{JOB_IDENTIFIER}", step.get("JOB_ID"))
         step_body = step_body.replace("{JOB_NAME}", step.get("JOB_NAME"))
 
         return step_body
-
-
-
-
-
-
-
