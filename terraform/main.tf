@@ -92,7 +92,7 @@ resource "google_storage_bucket_object" "uploaded_artifacts_external_composer" {
   name     = "dags/${each.key}"
   bucket   = "gs://${var.composer_bucket_name}"
   source   = "../composer-dags/${each.key}"
-  depends_on = [google_composer_environment.aef_composer_environment, null_resource.deploy_composer_dags]
+  depends_on = [null_resource.deploy_composer_dags]
 }
 
 resource "google_composer_environment" "aef_composer_environment" {

@@ -1,7 +1,7 @@
-project = "<PROJECT>"
+project = "<PROJECT_ID>"
 region  = "us-central1"
 
-data_transformation_project = "<PROJECT>"
+data_transformation_project = "<PROJECT_ID>"
 environment                 = "dev"
 
 deploy_cloud_workflows      = true
@@ -10,8 +10,8 @@ workflows_log_level         = "LOG_ERRORS_ONLY"
 deploy_composer_dags        = true
 create_composer_environment = true
 composer_config             = {
-  vpc              = "projects/<PROJECT>/global/networks/sample-vpc"
-  subnet           = "projects/<PROJECT>/regions/us-central1/subnetworks/default-us-central1"
+  vpc              = "projects/<PROJECT_ID>/global/networks/sample-vpc"
+  subnet           = "projects/<PROJECT_ID>/regions/us-central1/subnetworks/default-us-central1"
   cloud_sql        = "10.0.10.0/24"
   gke_master       = "10.0.11.0/28"
   environment_size = "ENVIRONMENT_SIZE_SMALL"

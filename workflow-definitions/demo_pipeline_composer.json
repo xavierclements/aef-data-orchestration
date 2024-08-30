@@ -8,16 +8,16 @@
           "THREAD_ID": "1",
           "STEPS": [
             {
-              "JOB_ID": "J01",
-              "JOB_NAME": "run_dataform_tag",
-              "TYPE": "async",
-              "COMPOSER_STEP": "dataform-tag-executor"
-            },
-            {
               "JOB_ID": "J02",
               "JOB_NAME": "sample_jdbc_dataflow_ingestion",
               "TYPE": "async",
               "COMPOSER_STEP": "dataflow-flextemplate-job-executor"
+            },
+            {
+              "JOB_ID": "J01",
+              "JOB_NAME": "run_dataform_tag",
+              "TYPE": "async",
+              "COMPOSER_STEP": "dataform-tag-executor"
             }
           ]
         }
