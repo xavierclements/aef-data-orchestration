@@ -6,7 +6,7 @@
 
 Data orchestration plays a vital role in enabling efficient data access and analysis, making it critical for data lakes and data warehouses.
 
-This repository automates the creation of [Google Cloud Workflows Definition](https://cloud.google.com/workflows/docs/reference/syntax) files from data pipeline configuration files. 
+This repository automates the creation of [Google Cloud Workflows Definition](https://cloud.google.com/workflows/docs/reference/syntax) files or [Cloud Composer DAGs](https://cloud.google.com/composer/docs/how-to/using/writing-dags) from data pipeline configuration files. 
 It's designed for seamless integration into your CI/CD pipeline, using ***LEVEL***, ***THREAD***, and ***STEP*** abstractions to define your batch data pipeline. 
 You also have the flexibility to directly execute ***workflows_generator.py*** for manual workflow definition generation.
 
