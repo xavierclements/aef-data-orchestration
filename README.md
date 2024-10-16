@@ -138,3 +138,5 @@ While usable independently, this tool is optimized as a component within a compr
 1. [Data Model](https://github.com/oscarpulido55/aef-data-model): Directly used by end data practitioners to manage data models, schemas, and Dataplex metadata.
 1. **(This repository) Data Orchestration**: Directly used by end data practitioners to define and deploy data pipelines using levels, threads, and steps.
 1. [Data Transformation](https://github.com/oscarpulido55/aef-data-transformation): Directly used by end data practitioners to define, store, and deploy data transformations.
+
+![AEF_repositories_data_orchestration.png](AEF_repositories_data_orchestration.png)
