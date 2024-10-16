@@ -58,8 +58,23 @@ Most batch data pipelines can be effectively defined using three simple concepts
   ]
 }
 ```
-
 This approach enables data analysts to build intricate data pipelines and reliably orchestrate them without writing  code. Configuration is handled through simple JSON definition files containing levels, threads, and steps.
+
+### Domain-Based vs. Central Orchestration
+
+The [engine](https://github.com/oscarpulido55/aef-data-orchestration/blob/e7efd8ec7ad33a280290ba62573c7e7bf2734646/terraform/variables.tf#L17) variable currently supports `cloud_workflows` or `composer`. 
+
+*   `cloud_workflows`:  Deploy Cloud Workflows in the project specified by the `project` variable. This allows for both **Domain-Based Orchestration** (deploying to a domain team's project) and **Central Orchestration** (deploying to a centralized project).
+
+*   `composer`: Creates/uses a Composer environment in the data domain team's project, following a **Domain-Based Orchestration** approach. This addresses [Airflow scalability complexity](https://cloud.google.com/blog/products/data-analytics/scale-your-composer-environment-together-your-business?e=48754805) and aligns with [tenancy strategies for Cloud Composer](https://cloud.google.com/blog/products/data-analytics/a-cloud-composer-tenancy-case-study?e=48754805).
+
+**Domain-Based Orchestration**: Isolates orchestration by domain, potentially simplifying IAM and networking but increasing operational overhead. Preferred for multi-domain environments with distinct data needs. This repository demonstrates this with one Composer environment per data domain team.
+
+**Central Orchestration**: Consolidates orchestration, centralizing Data Ops and potentially reducing management complexity. Simpler for single-domain environments or those with shared networks. May require IAM adjustments. Easily achieved with Cloud Workflows due to its serverless nature.
+
+The optimal approach depends on your organization's needs and constraints, including the number of domains, data access patterns, and networking configurations.
+
+
 ## Usage
 ### Manual Execution
 1. The following script will read a simple JSON data pipeline definition (levels, threads, and steps) and generate a Cloud Workflows configuration file ready for deployment. This configuration manages retries, cycles, errors, and calls step executors as Cloud Functions that should exist in the project. Typically, those Cloud Functions are deployed using the Orchestration framework repository.
@@ -140,10 +155,3 @@ While usable independently, this tool is optimized as a component within a compr
 1. [Data Transformation](https://github.com/oscarpulido55/aef-data-transformation): Directly used by end data practitioners to define, store, and deploy data transformations.
 
 ![AEF_repositories_data_orchestration.png](AEF_repositories_data_orchestration.png)
-
-### Domain-Based Orchestration V.S Central Orchestration 
-***Domain-Based Orchestration***: Isolating orchestration by domain potentially simplifies IAM and networking management but may lead to increased operational overhead and complexity. This approach is preferred in multi-domain environments with distinct data access and processing needs. This is demonstrated in this repository, where one Composer environment is managed and deployed for each data domain team, with each team owning a copy of the repository.
-
-***Central Orchestration***: Consolidating orchestration into a single project centralizes Data Ops and potentially reduces management complexity. This approach may be simpler to understand and manage, particularly in single-domain environments or those with shared networks. However, it may necessitate IAM adjustments. This is easily managed when using Cloud Workflows, as its serverless nature enables deployment within a single centralized project for all data domain teams.
-
-Both approaches are valid, and the "definitive" guide can be adapted based on specific organizational requirements and constraints. Factors such as the number of domains, data access patterns, and networking configurations should inform the decision. Simplifying the development of complex data pipelines
