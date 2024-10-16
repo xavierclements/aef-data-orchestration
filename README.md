@@ -1,4 +1,7 @@
 # Analytics Engineering Framework - Data Orchestration
+
+***Note:*** For a comprehensive installation guide of all the AEF repositories together, please look [here](https://github.com/oscarpulido55/aef-orchestration-framework/blob/main/AEF_DEPLOYMENT.md).
+
 [Analytics engineers](https://www.getdbt.com/what-is-analytics-engineering) lay the foundation for others to organize, transform, and document data using software engineering principles. Providing easy to use data platforms that empower data practitioners to independently build data pipelines in a standardized and scalable way, and answer their own data-driven questions.
 
 Data orchestration plays a vital role in enabling efficient data access and analysis, making it critical for data lakes and data warehouses.
@@ -77,18 +80,18 @@ The provided Terraform code enables reading defined JSON data pipelines definiti
 ```
 2. Define your terraform variables.  It is recommended creating a `.tfvars` file.
 <!-- BEGIN TFDOC -->
-| name                                     | description                                                                                                                                                           | type        | required | default                 |
-|------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------|----------|--------------------------|
-| [project](terraform/variables.tf#L16)             | Project where the cloud workflows or Composer DAGs will be created.                                                                                                   | string      | true     | -                       |
-| [region](terraform/variables.tf#L24)              | Region where the AEF data orchestration workflows will be deployed.                                                                                                   | string      | true     | -                       |
-| [environment](terraform/variables.tf#L32)         | AEF environment. Will be used to create the parameters file for Cloud Workflows: **platform-parameters-$ENVIRONMENT.json**                                            | string      | true     | -                       |
-| [data_transformation_project](terraform/variables.tf#L40) | Project where the data transformation jobs definitions reside (will be used to infer bucket storing job parameter json files).                                        | string      | true     | -                       |
-| [deploy_cloud_workflows](terraform/variables.tf#L48) | Controls whether cloud workflows is generated and deployed alongside Terraform resources. If false cloud workflows can be deployed as a next step in a CICD pipeline. | bool        | false    | `true`                  |
-| [deploy_composer_dags](terraform/variables.tf#L56)    | Controls whether Airflow DAGs are generated and deployed alongside Terraform resources. If false DAGs could be deployed as a next step in a CICD pipeline.            | bool        | false    | `false`                 |
-| [create_composer_environment](terraform/variables.tf#L64) | Controls whether a composer environment will be created, If false and **deploy_composer_dags** set to **true**, then **composer_bucket_name** needs to be set.        | bool        | false    | `false`                 |
-| [composer_bucket_name](terraform/variables.tf#L72) | If Composer environment is not created and deploy_composer_dags is set to true, then this will be used to upload DAGs to.                                             | string      | false    | -                       |
-| [composer_config](terraform/variables.tf#L80)         | Cloud Composer config.                                                                                                                                                | object      | false    | `{}`                    |
-| [workflows_log_level](terraform/variables.tf#L151)    | Describes the level of platform logging to apply to calls and call responses during executions of cloud workflows                                                     | string      | false    | `LOG_ERRORS_ONLY` |
+| name                                                      | description                                                                                                                                                           | type        | required | default                 |
+|-----------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------|----------|--------------------------|
+| [project](terraform/variables.tf#L17)                     | Project where the cloud workflows or Composer DAGs will be created.                                                                                                   | string      | true     | -                       |
+| [region](terraform/variables.tf#L23)                      | Region where the AEF data orchestration workflows will be deployed.                                                                                                   | string      | true     | -                       |
+| [environment](terraform/variables.tf#L29)                 | AEF environment. Will be used to create the parameters file for Cloud Workflows: **platform-parameters-$ENVIRONMENT.json**                                            | string      | true     | -                       |
+| [data_transformation_project](terraform/variables.tf#L35) | Project where the data transformation jobs definitions reside (will be used to infer bucket storing job parameter json files).                                        | string      | true     | -                       |
+| [deploy_cloud_workflows](terraform/variables.tf#L41)      | Controls whether cloud workflows is generated and deployed alongside Terraform resources. If false cloud workflows can be deployed as a next step in a CICD pipeline. | bool        | false    | `true`                  |
+| [deploy_composer_dags](terraform/variables.tf#L48)        | Controls whether Airflow DAGs are generated and deployed alongside Terraform resources. If false DAGs could be deployed as a next step in a CICD pipeline.            | bool        | false    | `false`                 |
+| [create_composer_environment](terraform/variables.tf#L55) | Controls whether a composer environment will be created, If false and **deploy_composer_dags** set to **true**, then **composer_bucket_name** needs to be set.        | bool        | false    | `false`                 |
+| [composer_bucket_name](terraform/variables.tf#L62)        | If Composer environment is not created and deploy_composer_dags is set to true, then this will be used to upload DAGs to.                                             | string      | false    | -                       |
+| [composer_config](terraform/variables.tf#L69)             | Cloud Composer config.                                                                                                                                                | object      | false    | `{}`                    |
+| [workflows_log_level](terraform/variables.tf#L120)        | Describes the level of platform logging to apply to calls and call responses during executions of cloud workflows                                                     | string      | false    | `LOG_ERRORS_ONLY` |
 <!-- END TFDOC -->
 
 2.Run the Terraform Plan / Apply using the variables you defined.
@@ -118,24 +121,6 @@ composer_config             = {
     cloud_data_lineage_integration = true
   }
   workloads_config = {
-    scheduler = {
-      cpu        = 0.5
-      memory_gb  = 1.875
-      storage_gb = 1
-      count      = 1
-    }
-    web_server = {
-      cpu        = 0.5
-      memory_gb  = 1.875
-      storage_gb = 1
-    }
-    worker = {
-      cpu        = 0.5
-      memory_gb  = 1.875
-      storage_gb = 1
-      min_count  = 1
-      max_count  = 3
-    }
   }
 }
 ```
@@ -149,7 +134,7 @@ terraform plan -var-file="prod.tfvars"
 
 While usable independently, this tool is optimized as a component within a comprehensive Analytics Engineering Framework comprising:
 
-1. **Orchestration Framework**: Maintained by Analytics Engineers to provide seamless, extensible orchestration and execution infrastructure.
-1. **Data Model**: Directly used by end data practitioners to manage data models, schemas, and Dataplex metadata.
+1. [Orchestration Framework](https://github.com/oscarpulido55/aef-orchestration-framework): Maintained by Analytics Engineers to provide seamless, extensible orchestration and execution infrastructure.
+1. [Data Model](https://github.com/oscarpulido55/aef-data-model): Directly used by end data practitioners to manage data models, schemas, and Dataplex metadata.
 1. **(This repository) Data Orchestration**: Directly used by end data practitioners to define and deploy data pipelines using levels, threads, and steps.
-1. **Data Transformation**: Directly used by end data practitioners to define, store, and deploy data transformations.
+1. [Data Transformation](https://github.com/oscarpulido55/aef-data-transformation): Directly used by end data practitioners to define, store, and deploy data transformations.

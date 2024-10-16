@@ -31,6 +31,11 @@ composer_config             = {
       memory_gb  = 1.875
       storage_gb = 1
     }
+    triggerer = {
+      cpu        = 0.5
+      memory_gb  = 1.875
+      count      = 1
+    }
     worker = {
       cpu        = 0.5
       memory_gb  = 1.875

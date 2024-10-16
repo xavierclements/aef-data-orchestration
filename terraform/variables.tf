@@ -98,6 +98,11 @@ variable "composer_config" {
         memory_gb  = optional(number)
         storage_gb = optional(number)
       }), {})
+      triggerer = optional(object({
+        cpu        = optional(number)
+        memory_gb  = optional(number)
+        count      = optional(number)
+      }), {})
       worker = optional(object({
         cpu        = optional(number)
         memory_gb  = optional(number)

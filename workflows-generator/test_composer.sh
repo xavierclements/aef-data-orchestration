@@ -12,10 +12,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-WORKFLOW=workflow_single_thread_1_level_composer
+WORKFLOW=demo_pipeline_composer
 
 python3 orchestration_generator.py \
 ../workflow-definitions/$WORKFLOW.json \
 ../workflow-definitions/platform-parameters-dev.json \
-../composer-dags/result-$WORKFLOW.py \
+../composer-dags/$WORKFLOW.py \
 False

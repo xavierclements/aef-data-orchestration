@@ -16,10 +16,11 @@
 # Load The Dependencies
 # --------------------------------------------------------------------------------
 
-import datetime
 import json
+import uuid
 import re
 from airflow import models
+import google.auth
 from airflow.models.variable import Variable
 from airflow.providers.google.cloud.operators.dataflow import DataflowStartFlexTemplateOperator
 from airflow.operators import empty
@@ -27,19 +28,28 @@ from airflow.providers.google.cloud.hooks.gcs import GCSHook
 from airflow.utils.task_group import TaskGroup
 from airflow.providers.google.cloud.operators.bigquery import  BigQueryInsertJobOperator
 from airflow.operators.empty import EmptyOperator
+from airflow.operators.python import PythonOperator
 from airflow.providers.google.cloud.sensors.dataform import DataformWorkflowInvocationStateSensor
 from airflow.providers.google.cloud.operators.dataform import (
     DataformCreateCompilationResultOperator,
     DataformCreateWorkflowInvocationOperator,
 )
+from airflow.providers.google.cloud.operators.dataproc import (
+    DataprocCreateBatchOperator,
+    DataprocGetBatchOperator
+)
+from airflow.providers.google.cloud.sensors.dataproc import DataprocBatchSensor
 from google.cloud.dataform_v1beta1 import WorkflowInvocation
 from google.cloud import storage
+from datetime import datetime, timedelta
 
 # --------------------------------------------------------------------------------
 # Read variables from GCS parameters file for the job
 # --------------------------------------------------------------------------------
 storage_client = storage.Client()
 jobs_bucket = Variable.get("DATA_TRANSFORMATION_GCS_BUCKET")
+
+batch_id = f"aef-{str(uuid.uuid4())}"
 
 def extract_job_params(job_name, function_name, encoding='utf-8'):
     """Extracts parameters from a JSON job file.
@@ -71,7 +81,7 @@ def extract_job_params(job_name, function_name, encoding='utf-8'):
 # If you are running Airflow in more than one time zone
 # see https://airflow.apache.org/docs/apache-airflow/stable/timezone.html
 # for best practices
-yesterday = datetime.datetime.now() - datetime.timedelta(days=1)
+yesterday = datetime.now() - timedelta(days=1)
 
 default_args = {
     'owner': 'airflow',
@@ -81,13 +91,13 @@ default_args = {
     'email_on_failure': False,
     'email_on_retry': False,
     'retries': 0,
-    'retry_delay': datetime.timedelta(minutes=5)
+    'retry_delay': timedelta(minutes=5)
 }
 
 <<STEPS_ARGS>>
 
 start_date_str = yesterday.strftime('%Y-%m-%d')
-end_date_str = datetime.datetime.today().strftime('%Y-%m-%d')
+end_date_str = datetime.today().strftime('%Y-%m-%d')
 # --------------------------------------------------------------------------------
 # Main DAG
 # --------------------------------------------------------------------------------

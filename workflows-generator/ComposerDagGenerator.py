@@ -14,6 +14,7 @@
 
 from commons import *
 
+
 class ComposerDagGenerator:
     def __init__(self, workflow_config, exec_config, generate_for_pipeline, config_file, json_file_name):
         self.workflow_config = workflow_config
@@ -26,22 +27,29 @@ class ComposerDagGenerator:
         self.thread_template = ''
         self.dataform_tag_executor_template = ''
         self.dataflow_flextemplate_job_executor_template = ''
+        self.dataproc_serverless_job_executor_template = ''
 
     def load_templates(self):
         """method for loading templates"""
-        self.workflow_template = read_template("workflow",self.generate_for_pipeline, "composer-templates", "py")
-        self.level_template = read_template("level",self.generate_for_pipeline, "composer-templates", "py")
-        self.thread_template = read_template("thread",self.generate_for_pipeline, "composer-templates", "py")
-        #add new templates for other executors here
-        self.dataform_tag_executor_template = read_template("dataform_tag_executor", self.generate_for_pipeline, "composer-templates", "py")
-        self.dataflow_flextemplate_job_executor_template = read_template("dataflow_flextemplate_job_executor", self.generate_for_pipeline, "composer-templates", "py")
-
+        self.workflow_template = read_template("workflow", self.generate_for_pipeline, "composer-templates", "py")
+        self.level_template = read_template("level", self.generate_for_pipeline, "composer-templates", "py")
+        self.thread_template = read_template("thread", self.generate_for_pipeline, "composer-templates", "py")
+        # add new templates for other executors here
+        self.dataform_tag_executor_template = read_template("dataform_tag_executor", self.generate_for_pipeline,
+                                                            "composer-templates", "py")
+        self.dataflow_flextemplate_job_executor_template = read_template("dataflow_flextemplate_job_executor",
+                                                                         self.generate_for_pipeline,
+                                                                         "composer-templates", "py")
+        self.dataproc_serverless_job_executor_template = read_template("dataproc_serverless_job_executor",
+                                                                       self.generate_for_pipeline, "composer-templates",
+                                                                       "py")
 
     def generate_workflows_body(self):
         """method to generate Airflow body"""
         levels = self.process_levels(self.workflow_config)
         workflow_body = self.workflow_template.replace("<<LEVELS>>", "".join(levels))
-        workflow_body = workflow_body.replace("<<LEVEL_DEPENDENCIES>>", self.get_level_dependency_string(self.workflow_config))
+        workflow_body = workflow_body.replace("<<LEVEL_DEPENDENCIES>>",
+                                              self.get_level_dependency_string(self.workflow_config))
         workflow_body = workflow_body.replace("<<DAG_NAME>>", self.json_file_name)
         workflow_body = workflow_body.replace("<<STEPS_ARGS>>", self.process_steps_vars(self.workflow_config))
         return workflow_body
@@ -59,15 +67,14 @@ class ComposerDagGenerator:
         ]
         return '\n'.join(vars)
 
-    def get_level_dependency_string(self,config):
+    def get_level_dependency_string(self, config):
         level_names = []
         for level in config:
             level_name = "tg_Level_" + level.get("LEVEL_ID")
             level_names.append(level_name)
         return " >> ".join(level_names)
 
-
-    def process_levels(self,config):
+    def process_levels(self, config):
         """method to process levels"""
         levels = []
         for index, level in enumerate(config):
@@ -75,21 +82,20 @@ class ComposerDagGenerator:
             level_body = self.level_template.replace("{LEVEL_ID}", level.get("LEVEL_ID"))
             level_body = level_body.replace("<<THREADS>>", "".join(threads))
             level_body = level_body.replace("<<THREAD_DEPENDENCIES>>",
-                                            self.get_thread_dependency_string(level.get("THREADS"), level.get("LEVEL_ID")))
+                                            self.get_thread_dependency_string(level.get("THREADS"),
+                                                                              level.get("LEVEL_ID")))
             levels.append(level_body)
 
         return levels
 
-
-    def get_thread_dependency_string(self,threads, level_id):
+    def get_thread_dependency_string(self, threads, level_id):
         thread_names = []
         for thread in threads:
             thread_name = "tg_level_" + level_id + "_Thread_" + thread.get("THREAD_ID")
             thread_names.append(thread_name)
         return "\n           ".join(thread_names)
 
-
-    def process_threads(self,threads, level_id):
+    def process_threads(self, threads, level_id):
         """method to process threads"""
         thread_bodies = []
         for index, thread in enumerate(threads):
@@ -102,15 +108,14 @@ class ComposerDagGenerator:
             thread_bodies.append(thread_body)
         return thread_bodies
 
-
-    def get_steps_dependency_string(self,steps):
+    def get_steps_dependency_string(self, steps):
         step_names = []
         for step in steps:
             step_name = step.get("JOB_NAME")
             step_names.append(step_name)
         return " >> ".join(step_names)
 
-    def process_steps(self,steps, level_id, thread_id):
+    def process_steps(self, steps, level_id, thread_id):
         """method to process steps"""
         step_bodies = []
 
@@ -121,7 +126,7 @@ class ComposerDagGenerator:
             step_bodies.append(step_body)
         return step_bodies
 
-    def process_step_async(self,level_id, thread_id, step):
+    def process_step_async(self, level_id, thread_id, step):
         """method to process async step"""
         step_name = step.get("JOB_NAME")
         step_body = ''
@@ -130,6 +135,8 @@ class ComposerDagGenerator:
             step_body = self.dataform_tag_executor_template.replace("{JOB_ID}", step_name)
         if "dataflow-flextemplate-job-executor" in step.get("COMPOSER_STEP"):
             step_body = self.dataflow_flextemplate_job_executor_template.replace("{JOB_ID}", step_name)
+        if "dataproc-serverless-job-executor" in step.get("COMPOSER_STEP"):
+            step_body = self.dataproc_serverless_job_executor_template.replace("{JOB_ID}", step_name)
         step_body = step_body.replace("{LEVEL_ID}", level_id)
         step_body = step_body.replace("{THREAD_ID}", thread_id)
         step_body = step_body.replace("{JOB_IDENTIFIER}", step.get("JOB_ID"))

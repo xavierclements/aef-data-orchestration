@@ -130,6 +130,11 @@ resource "google_composer_environment" "aef_composer_environment" {
         min_count  = var.composer_config.workloads_config.worker.min_count
         max_count  = var.composer_config.workloads_config.worker.max_count
       }
+      triggerer {
+        cpu        = var.composer_config.workloads_config.worker.cpu
+        memory_gb  = var.composer_config.workloads_config.worker.memory_gb
+        count      = var.composer_config.workloads_config.scheduler.count
+      }
     }
 
     environment_size = var.composer_config.environment_size
@@ -180,7 +185,24 @@ module "composer-service-account" {
       "roles/composer.worker",
       "roles/dataform.admin",
       "roles/dataflow.admin",
-      "roles/iam.serviceAccountUser"
+      "roles/iam.serviceAccountUser",
+      "roles/composer.ServiceAgentV2Ext",
+      "roles/iam.serviceAccountTokenCreator",
+      "roles/dataproc.admin"
+    ]
+  }
+}
+
+module "dataproc-service-account" {
+  count    = var.create_composer_environment == true ? 1 : 0
+  source     = "github.com/GoogleCloudPlatform/cloud-foundation-fabric/modules/iam-service-account"
+  project_id = var.project
+  name       = "aef-dataproc${var.environment}-sa"
+  iam_project_roles = {
+    "${var.project}" = [
+      "roles/bigquery.jobUser",
+      "roles/dataproc.worker",
+      "roles/dataproc.admin"
     ]
   }
 }
