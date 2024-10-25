@@ -56,21 +56,6 @@ Most batch data pipelines can be effectively defined using three simple concepts
 ```
 This approach enables data analysts to build intricate data pipelines and reliably orchestrate them without writing  code. Configuration is handled through simple JSON definition files containing levels, threads, and steps.
 
-### Domain-Based vs. Central Orchestration
-
-The [engine](https://github.com/oscarpulido55/aef-data-orchestration/blob/e7efd8ec7ad33a280290ba62573c7e7bf2734646/terraform/variables.tf#L17) variable currently supports `cloud_workflows` or `composer`. 
-
-*   `cloud_workflows`:  Deploy Cloud Workflows in the project specified by the `project` variable. This allows for both **Domain-Based Orchestration** (deploying to a domain team's project) and **Central Orchestration** (deploying to a centralized project).
-
-*   `composer`: Creates/uses a Composer environment in the data domain team's project, following a **Domain-Based Orchestration** approach. This addresses [Airflow scalability complexity](https://cloud.google.com/blog/products/data-analytics/scale-your-composer-environment-together-your-business?e=48754805) and aligns with [tenancy strategies for Cloud Composer](https://cloud.google.com/blog/products/data-analytics/a-cloud-composer-tenancy-case-study?e=48754805).
-
-**Domain-Based Orchestration**: Isolates orchestration by domain, potentially simplifying IAM and networking but increasing operational overhead. Preferred for multi-domain environments with distinct data needs. This repository demonstrates this with one Composer environment per data domain team.
-
-**Central Orchestration**: Consolidates orchestration, centralizing Data Ops and potentially reducing management complexity. Simpler for single-domain environments or those with shared networks. May require IAM adjustments. Easily achieved with Cloud Workflows due to its serverless nature.
-
-The optimal approach depends on your organization's needs and constraints, including the number of domains, data access patterns, and networking configurations.
-
-
 ## Usage
 ### Manual Execution
 This script processes a JSON-formatted data pipeline definition (specifying levels, threads, and steps) and generates deployment-ready code for your chosen orchestration platform:
@@ -108,41 +93,20 @@ The provided Terraform code enables reading defined JSON data pipelines definiti
 | [workflows_log_level](terraform/variables.tf#L120)        | Describes the level of platform logging to apply to calls and call responses during executions of cloud workflows                                                     | string      | false    | `LOG_ERRORS_ONLY` |
 <!-- END TFDOC -->
 
-2.Run the Terraform Plan / Apply using the variables you defined.
 
-#### Example 
+### Domain-Based vs. Central Orchestration
 
-```hcl
-project = "<PROJECT>"
-region  = "<REGION>"
+The [engine](https://github.com/oscarpulido55/aef-data-orchestration/blob/e7efd8ec7ad33a280290ba62573c7e7bf2734646/terraform/variables.tf#L17) variable currently supports `cloud_workflows` or `composer`. 
 
-data_transformation_project = "<PROJECT>"
-environment                 = "dev"
+*   `cloud_workflows`:  Deploy Cloud Workflows in the project specified by the `project` variable. This allows for both **Domain-Based Orchestration** (deploying to a domain team's project) and **Central Orchestration** (deploying to a centralized project).
 
-deploy_cloud_workflows      = true
-workflows_log_level         = "LOG_ERRORS_ONLY"
+*   `composer`: Creates/uses a Composer environment in the data domain team's project, following a **Domain-Based Orchestration** approach. This addresses [Airflow scalability complexity](https://cloud.google.com/blog/products/data-analytics/scale-your-composer-environment-together-your-business?e=48754805) and aligns with [tenancy strategies for Cloud Composer](https://cloud.google.com/blog/products/data-analytics/a-cloud-composer-tenancy-case-study?e=48754805).
 
-deploy_composer_dags        = true
-create_composer_environment = true
-composer_config             = {
-  vpc              = "projects/<PROJECT>/global/networks/sample-vpc"
-  subnet           = "projects/<PROJECT>/regions/us-central1/subnetworks/default-us-central1"
-  cloud_sql        = "10.0.10.0/24"
-  gke_master       = "10.0.11.0/28"
-  environment_size = "ENVIRONMENT_SIZE_SMALL"
-  software_config  = {
-    image_version = "composer-2-airflow-2"
-    cloud_data_lineage_integration = true
-  }
-  workloads_config = {
-  }
-}
-```
+**Domain-Based Orchestration**: Isolates orchestration by domain, potentially simplifying IAM and networking but increasing operational overhead. Preferred for multi-domain environments with distinct data needs. This repository demonstrates this with one Composer environment per data domain team.
 
-#### Run Terraform Plan / Apply using the variables you defined.
-```bash
-terraform plan -var-file="prod.tfvars"
-```
+**Central Orchestration**: Consolidates orchestration, centralizing Data Ops and potentially reducing management complexity. Simpler for single-domain environments or those with shared networks. May require IAM adjustments. Easily achieved with Cloud Workflows due to its serverless nature.
+
+The optimal approach depends on your organization's needs and constraints, including the number of domains, data access patterns, and networking configurations.
 
 ## Integration with Analytics Engineering Framework
 Data orchestration plays a vital role in enabling efficient data access and analysis, making it critical for data lakes and data warehouses.
