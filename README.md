@@ -63,7 +63,7 @@ The provided Terraform code enables reading defined JSON data pipelines definiti
 
 ### Domain-Based vs. Central Orchestration
 
-The [engine](https://github.com/oscarpulido55/aef-data-orchestration/blob/e7efd8ec7ad33a280290ba62573c7e7bf2734646/terraform/variables.tf#L17) variable currently supports `cloud_workflows` or `composer`. 
+The [engine](https://github.com/oscarpulido55/aef-data-orchestration/blob/e7efd8ec7ad33a280290ba62573c7e7bf2734646/workflow-definitions/demo_pipeline_composer.json#L2) variable currently supports `cloud_workflows` or `composer`. 
 
 *   `cloud_workflows`:  Deploy Cloud Workflows in the project specified by the `project` variable. This allows for both **Domain-Based Orchestration** (deploying to a domain team's project) and **Central Orchestration** (deploying to a centralized project).
 
