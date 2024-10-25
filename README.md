@@ -9,7 +9,7 @@ You also have the flexibility to directly execute ***workflows_generator.py*** f
 ## Key Features
 - ***Abstracted Pipeline Definition:*** Conveniently define your batch data pipelines using the intuitive concepts of LEVEL, THREAD, and STEP.
 - ***Manual Execution:*** Option to directly run ***workflows_generator.py*** for on-demand workflow creation.
-- ***CI/CD Integration:***  Effortlessly streamline your Google Cloud Workflow generation within your CI/CD pipeline. (Deployed here as a Terraform null_resource as a simple example).
+- ***CI/CD Integration:***  Effortlessly streamline your Google Cloud Workflow generation within your CI/CD pipeline.
 
 ##  Concepts
 Most batch data pipelines can be effectively defined using three simple concepts, simplifying  pipeline creation and scheduling for data analysts:
