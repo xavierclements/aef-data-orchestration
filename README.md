@@ -19,41 +19,8 @@ Most batch data pipelines can be effectively defined using three simple concepts
 
 ![level-thread-step.png](level-thread-step.png)
 
-```json
-{
-  "engine": "cloud_workflows",
-  "definition": [
-    {
-      "LEVEL_ID": "1",
-      "THREADS": [
-        {
-          "THREAD_ID": "1",
-          "STEPS": [
-            {
-              "JOB_ID": "J01",
-              "JOB_NAME": "sample_jdbc_dataflow_ingestion",
-              "TYPE": "async",
-              "FUNCTION_ID_NAME": "dataflow-flextemplate-job-executor",
-              "FUNCTION_STATUS_NAME": "dataflow-flextemplate-job-executor",
-              "WAIT_TIME_SECONDS": "30",
-              "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12"
-            },
-            {
-              "JOB_ID": "J02",
-              "JOB_NAME": "run_dataform_tag",
-              "TYPE": "async",
-              "FUNCTION_ID_NAME": "dataform-tag-executor",
-              "FUNCTION_STATUS_NAME": "dataform-tag-executor",
-              "WAIT_TIME_SECONDS": "20",
-              "ASYNC_TIMEOUT_LOOP_IN_MINUTES": "12"
-            }
-          ]
-        }
-      ]
-    }
-  ]
-}
-```
+Find sample Json configuration files [here](https://github.com/oscarpulido55/aef-data-orchestration/tree/main/workflow-definitions).
+
 This approach enables data analysts to build intricate data pipelines and reliably orchestrate them without writing  code. Configuration is handled through simple JSON definition files containing levels, threads, and steps.
 
 ## Usage
