@@ -1,4 +1,4 @@
-# Analytics Engineering Framework - Data Orchestration
+# Data Orchestration - Analytics Engineering Framework
 
 ***Note:*** For a comprehensive installation guide of all the AEF repositories together, please look [here](https://github.com/oscarpulido55/aef-orchestration-framework/blob/main/AEF_DEPLOYMENT.md).
 
@@ -11,9 +11,9 @@ It's designed for seamless integration into your CI/CD pipeline, using ***LEVEL*
 You also have the flexibility to directly execute ***workflows_generator.py*** for manual workflow definition generation.
 
 ## Key Features
-- ***CI/CD Integration:***  Effortlessly streamline your Google Cloud Workflow generation within your CI/CD pipeline. (Deployed here as a Terraform null_resource as a simple example).
 - ***Abstracted Pipeline Definition:*** Conveniently define your batch data pipelines using the intuitive concepts of LEVEL, THREAD, and STEP.
 - ***Manual Execution:*** Option to directly run ***workflows_generator.py*** for on-demand workflow creation.
+- ***CI/CD Integration:***  Effortlessly streamline your Google Cloud Workflow generation within your CI/CD pipeline. (Deployed here as a Terraform null_resource as a simple example).
 
 ##  Concepts
 Most batch data pipelines can be effectively defined using three simple concepts, simplifying  pipeline creation and scheduling for data analysts:
@@ -77,7 +77,10 @@ The optimal approach depends on your organization's needs and constraints, inclu
 
 ## Usage
 ### Manual Execution
-1. The following script will read a simple JSON data pipeline definition (levels, threads, and steps) and generate a Cloud Workflows configuration file ready for deployment. This configuration manages retries, cycles, errors, and calls step executors as Cloud Functions that should exist in the project. Typically, those Cloud Functions are deployed using the Orchestration framework repository.
+This script processes a JSON-formatted data pipeline definition (specifying levels, threads, and steps) and generates deployment-ready code for your chosen orchestration platform:
+- ***Cloud Workflows***: Produces a [source file](https://cloud.google.com/workflows/docs/reference/syntax#file_structure) that incorporates robust error handling, retry mechanisms, and cyclical execution. It invokes step executors as Cloud Functions --pre-deployed in your project, typically using the [Orchestration framework repository](https://github.com/oscarpulido55/aef-orchestration-framework)--.
+- ***Cloud Composer/Airflow***: Generates an Airflow DAG that leverages Google Cloud operators to execute the pipeline steps as defined in the JSON definition.
+Both options rely on predefined [templates](https://github.com/oscarpulido55/aef-data-orchestration/tree/main/workflows-generator) to streamline the code generation process.
 ```shell
 python3 workflows_generator.py \
 ../workflow-definitions/etl_example_1.json \
@@ -86,7 +89,7 @@ workflows_etl_example_1.json \
 False
 ```
 ### Terraform
-The provided Terraform code enables reading defined JSON data pipelines definitions and managing the deployment of the resulting Cloud Workflows. In addition to the example using Terraform's *null_resource* to generate Cloud Workflows, these workflows can also be generated and deployed as a separate step within your CI/CD pipeline.
+The provided Terraform code enables reading defined JSON data pipelines definitions and managing the deployment of the resulting Cloud Workflows or Composer DAGs. In addition to the example using Terraform's `null_resource` to generate Cloud Workflows, these workflows can also be generated and deployed as a separate step within your CI/CD pipeline.
 1. Locate your JSON data pipeline definition files in the repository.
 ```
 ├── workflow-definitions
