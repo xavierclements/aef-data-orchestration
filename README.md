@@ -1,10 +1,6 @@
-# Data Orchestration - Analytics Engineering Framework
+# Data Orchestration
 
 ***Note:*** For a comprehensive installation guide of all the AEF repositories together, please look [here](https://github.com/oscarpulido55/aef-orchestration-framework/blob/main/AEF_DEPLOYMENT.md).
-
-[Analytics engineers](https://www.getdbt.com/what-is-analytics-engineering) lay the foundation for others to organize, transform, and document data using software engineering principles. Providing easy to use data platforms that empower data practitioners to independently build data pipelines in a standardized and scalable way, and answer their own data-driven questions.
-
-Data orchestration plays a vital role in enabling efficient data access and analysis, making it critical for data lakes and data warehouses.
 
 This repository automates the creation of [Google Cloud Workflows Definition](https://cloud.google.com/workflows/docs/reference/syntax) files or [Cloud Composer DAGs](https://cloud.google.com/composer/docs/how-to/using/writing-dags) from [data pipeline configuration files](https://github.com/oscarpulido55/aef-data-orchestration/blob/main/workflow-definitions/demo_pipeline_cloud_workflows.json). 
 It's designed for seamless integration into your CI/CD pipeline, using ***LEVEL***, ***THREAD***, and ***STEP*** abstractions to define your batch data pipeline. 
@@ -149,6 +145,7 @@ terraform plan -var-file="prod.tfvars"
 ```
 
 ## Integration with Analytics Engineering Framework
+Data orchestration plays a vital role in enabling efficient data access and analysis, making it critical for data lakes and data warehouses.
 
 While usable independently, this tool is optimized as a component within a comprehensive Analytics Engineering Framework comprising:
 
