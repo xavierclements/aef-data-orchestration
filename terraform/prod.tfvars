@@ -1,22 +1,22 @@
-project = "<PROJECT_ID>"
+project = "aef-basic"
 region  = "us-central1"
 
-data_transformation_project = "<PROJECT_ID>"
+data_transformation_project = "aef-basic"
 environment                 = "dev"
 
-deploy_cloud_workflows      = true
-workflows_log_level         = "LOG_ERRORS_ONLY"
+deploy_cloud_workflows = true
+workflows_log_level    = "LOG_ERRORS_ONLY"
 
 deploy_composer_dags        = true
 create_composer_environment = true
-composer_config             = {
-  vpc              = "projects/<PROJECT_ID>/global/networks/sample-vpc"
-  subnet           = "projects/<PROJECT_ID>/regions/us-central1/subnetworks/default-us-central1"
+composer_config = {
+  vpc              = "projects/aef-basic/global/networks/sample-vpc"
+  subnet           = "projects/aef-basic/regions/us-central1/subnetworks/default-us-central1"
   cloud_sql        = "10.0.10.0/24"
   gke_master       = "10.0.11.0/28"
   environment_size = "ENVIRONMENT_SIZE_SMALL"
-  software_config  = {
-    image_version = "composer-2-airflow-2"
+  software_config = {
+    image_version                  = "composer-2-airflow-2"
     cloud_data_lineage_integration = true
   }
   workloads_config = {
@@ -32,9 +32,9 @@ composer_config             = {
       storage_gb = 1
     }
     triggerer = {
-      cpu        = 0.5
-      memory_gb  = 1.875
-      count      = 1
+      cpu       = 0.5
+      memory_gb = 1.875
+      count     = 1
     }
     worker = {
       cpu        = 0.5
