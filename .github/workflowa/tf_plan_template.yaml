@@ -1,0 +1,113 @@
+name: Base Terraform Plan Template
+
+on:
+  workflow_call:
+    secrets:
+      wifprovider:
+        required: true
+
+    inputs:
+      environment:
+        required: true
+        type: string
+      target_runner:
+        required: true
+        type: string
+      
+
+    outputs:
+      tfplan_exit_code:
+        description: Exit code for Terraform Plan
+        value: ${{ jobs.terraform-plan.outputs.tfplan_exit_code }}
+
+jobs:
+  terraform-plan:
+    name: Terraform Plan "${{ inputs.environment }}"
+    runs-on: ${{ inputs.target_runner }}
+    environment:
+      name: ${{ inputs.environment}}_vars
+    outputs:
+      tfplan_exit_code: "${{ steps.tf-plan.outputs.exitcode }}"
+      composer_change: "${{ steps.composer-change.outputs.composer_change }}"
+
+    steps:
+      # Checkout the repository
+      - name: Checkout
+        uses: "actions/checkout@v4"
+
+      # Install Terraform
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      # Authenticate to GCP
+      - name: Google Auth
+        id: auth
+        uses: "google-github-actions/auth@v2"
+        with:
+          project_id: "${{ vars.PROJECT_ID }}"
+          service_account: "${{ vars.SERVICE_ACCOUNT }}"
+          workload_identity_provider: "${{ secrets.wifprovider }}"
+
+      # Terraform Initialise
+      - name: Terraform Init (${{ inputs.environment }})
+        run: |
+          cd ${{ inputs.environment }}/
+          rm -rf .terraform/ | true
+          terraform init
+
+      # Generate the execution plan for Terraform
+      # An exit code of 0 indicated no changes, 1 a terraform failure, 2 there are pending changes
+      - name: Terraform Plan (${{ inputs.environment }})
+        id: tf-plan
+        run: |
+          cd ${{ inputs.environment }}
+          terraform plan -detailed-exitcode -no-color -out tfplan-${{ inputs.environment }}
+
+      # Save plan to artifacts
+      - name: Publish Terraform Plan (${{ inputs.environment }})
+        uses: actions/upload-artifact@v4
+        with:
+          name: tfplan-${{ inputs.environment }}
+          path: ./${{ inputs.environment }}/tfplan-${{ inputs.environment }}
+
+      # Creat string output of Terraform Plan
+      - name: Create String Output
+        id: tf-plan-string
+        run: |
+          cd ${{ inputs.environment }}/
+          TERRAFORM_PLAN=$(terraform show -no-color tfplan-${{ inputs.environment }})
+
+          delimiter="$(openssl rand -hex 8)"
+          echo "summary<<${delimiter}" >> $GITHUB_OUTPUT
+          echo "## Terraform Plan (tfplan-${{ inputs.environment }}) Output" >> $GITHUB_OUTPUT
+          echo "<details><summary>Click to expand</summary>" >> $GITHUB_OUTPUT
+          echo "" >> $GITHUB_OUTPUT
+          echo '```terraform' >> $GITHUB_OUTPUT
+          echo "$TERRAFORM_PLAN" >> $GITHUB_OUTPUT
+          echo '```' >> $GITHUB_OUTPUT
+          echo "</details>" >> $GITHUB_OUTPUT
+          echo "${delimiter}" >> $GITHUB_OUTPUT
+
+      # Publish Terraform Plan as task summary
+      - name: Publish Terraform Plan (${{ inputs.environment }}) To Task Sumamry
+        env:
+          SUMMARY: ${{ steps.tf-plan-string.outputs.summary }}
+        run: |
+          echo "$SUMMARY" >> $GITHUB_STEP_SUMMARY
+
+      # Post the Terraform Plan changes if this is a PR
+      - name: Post Terraform Plan (${{ inputs.environment }}) Output
+        if: startsWith(github.ref, 'refs/remotes/pull')
+        uses: actions/github-script@v7
+        env:
+          SUMMARY: "${{ steps.tf-plan-string.outputs.summary }}"
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const body = `${process.env.SUMMARY}`;
+            github.rest.issues.createComment({
+                issue_number: context.issue.number,
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                body: body
+            })
