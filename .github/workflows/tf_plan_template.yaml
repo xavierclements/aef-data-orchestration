@@ -51,7 +51,7 @@ jobs:
       # Terraform Initialise
       - name: Terraform Init (${{ inputs.environment }})
         run: |
-          cd ${{ inputs.environment }}/
+          cd terraform
           rm -rf .terraform/ | true
           terraform init
 
@@ -60,22 +60,22 @@ jobs:
       - name: Terraform Plan (${{ inputs.environment }})
         id: tf-plan
         run: |
-          cd ${{ inputs.environment }}
-          terraform plan -detailed-exitcode -no-color -out tfplan-${{ inputs.environment }}
+          cd terraform
+          terraform plan -detailed-exitcode -no-color -out=${{ inputs.environment }}-tfplandataorch -var-file="prod.tfvars"
 
       # Save plan to artifacts
       - name: Publish Terraform Plan (${{ inputs.environment }})
         uses: actions/upload-artifact@v4
         with:
-          name: tfplan-${{ inputs.environment }}
-          path: ./${{ inputs.environment }}/tfplan-${{ inputs.environment }}
+          name: ${{ inputs.environment }}-tfplandataorch
+          path: ./terraform/${{ inputs.environment }}-tfplandataorch
 
       # Creat string output of Terraform Plan
       - name: Create String Output
         id: tf-plan-string
         run: |
-          cd ${{ inputs.environment }}/
-          TERRAFORM_PLAN=$(terraform show -no-color tfplan-${{ inputs.environment }})
+          cd terraform
+          TERRAFORM_PLAN=$(terraform plan -detailed-exitcode -no-color -out=${{ inputs.environment }}-tfplandataorch -var-file="prod.tfvars")
 
           delimiter="$(openssl rand -hex 8)"
           echo "summary<<${delimiter}" >> $GITHUB_OUTPUT
