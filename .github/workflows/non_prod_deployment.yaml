@@ -1,5 +1,5 @@
 # terraform deployment workflow
-name: CortexInfra - Staging
+name: AEF Data Orchestration
 
 on:
   push:
@@ -7,9 +7,7 @@ on:
       - main
       - feature/gh-actions
     paths:
-      - "modules/cortex/**"
-      - "modules/iam/**"
-      - "staging/**"
+      - "terraform/**"
 
 # OIDC Permissions
 permissions:
